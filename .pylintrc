@@ -1,0 +1,15 @@
+[MESSAGES CONTROL]
+disable=
+    bad-option-value,
+    cyclic-import, # This shoud be fixed
+    duplicate-code,
+    fixme,
+    import-outside-toplevel,
+    line-too-long,
+    old-style-class,
+    too-few-public-methods,
+    too-many-arguments,
+    too-many-branches,
+    too-many-instance-attributes,
+    too-many-locals,
+    too-many-public-methods,

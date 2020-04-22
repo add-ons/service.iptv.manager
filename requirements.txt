@@ -1,0 +1,5 @@
+coverage
+polib
+pylint
+python-dateutil
+tox
