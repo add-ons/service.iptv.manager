@@ -25,10 +25,6 @@ class BackgroundService(Monitor):
         """ Background loop for maintenance tasks """
         _LOGGER.debug('Service started')
 
-        # Configure IPTV Simple
-        # TODO: we probably don't have to do this every time, or maybe only check if the configuration is wrong
-        IptvSimple.setup()
-
         # Do an initial update
         # TODO: we have to schedule this somehow
         self.update()

@@ -12,21 +12,16 @@ kodilogging.config()
 _LOGGER = logging.getLogger(__name__)
 
 
-# TODO: throws the error:
-# RuntimeError: No valid addon id could be obtained. None was passed and the script wasn't executed in a normal xbmc manner.
-
-
 def setup_iptv_simple():
     """ Setup IPTV Simple """
-    _LOGGER.warning('setup IPTV Simple')
-    # TODO
+    reply = kodiutils.yesno_dialog(message='Are you sure to setup IPTV Simple?')  # TODO: translation
+    if reply:
+        IptvSimple.setup()
 
 
 def refresh():
     """ Refresh the channels and EPG """
-    reply = kodiutils.yesno_dialog(message='Are you sure to setup IPTV Simple?')  # TODO: translation
-    if reply:
-        IptvSimple.setup()
+    _LOGGER.debug('TODO: refresh')
 
 
 def run(function, *args):
