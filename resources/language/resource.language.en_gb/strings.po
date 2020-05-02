@@ -5,6 +5,19 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+### MESSAGES
+msgctxt "#30700"
+msgid "Are you sure you want to setup IPTV Simple for the use with IPTV Manager? Any existing configuration of IPTV Simple will be overwritten."
+msgstr ""
+
+msgctxt "#30701"
+msgid "The configuration of IPTV Simple is completed!"
+msgstr ""
+
+msgctxt "#30702"
+msgid "The configuration of IPTV Simple has failed. Please check the log files for more information."
+msgstr ""
+
 ### SETTINGS
 msgctxt "#30800"
 msgid "IPTV Simple"
@@ -15,6 +28,10 @@ msgid "Configuration"
 msgstr ""
 
 msgctxt "#30802"
-msgid "Configure IPTV Simple automatically..."
+msgid "Configure IPTV Simple automatically…"
+msgstr ""
+
+msgctxt "#30803"
+msgid "Open IPTV Simple settings…"
 msgstr ""
 

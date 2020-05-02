@@ -3,5 +3,6 @@
     <category label="30800"> <!-- IPTV Simple -->
         <setting label="30801" type="lsep"/> <!-- Configuration -->
         <setting label="30802" type="action" action="RunScript(service.iptv.manager,setup-iptv-simple)"/> <!-- Configure IPTV Simple automatically... -->
+        <setting label="30803" type="action" option="close" action="Addon.OpenSettings(pvr.iptvsimple)" enable="System.HasAddon(pvr.iptvsimple)"/>
     </category>
 </settings>

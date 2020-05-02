@@ -88,7 +88,9 @@ class Addon:
 
             # Fix logo path to be absolute
             if channel.get('logo'):
-                if not (channel.get('logo').startswith('http://') or channel.get('logo').startswith('https://') or channel.get('logo').startswith('special://')):
+                if not (channel.get('logo').startswith('http://')
+                        or channel.get('logo').startswith('https://')
+                        or channel.get('logo').startswith('special://')):
                     channel['logo'] = os.path.join(self.addon_path, channel.get('logo'))
             else:
                 # TODO: use the logo of the addon

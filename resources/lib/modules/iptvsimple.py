@@ -29,8 +29,9 @@ class IptvSimple:
             # Install IPTV Simple
             kodiutils.execute_builtin('InstallAddon', IPTV_SIMPLE_ID)
             addon = kodiutils.get_addon(IPTV_SIMPLE_ID)
-        except:
-            raise Exception('Could not enable IPTV Simple.')
+        except Exception as exc:  # pylint: disable=broad-except
+            _LOGGER.warning('Could not setup IPTV Simple: %s', str(exc))
+            return False
 
         # Deactivate IPTV Simple to hide the "Needs to be restarted" messages
         cls._deactivate()
@@ -51,6 +52,8 @@ class IptvSimple:
 
         # Activate IPTV Simple
         cls._activate()
+
+        return True
 
     @classmethod
     def restart(cls):
@@ -84,12 +87,16 @@ class IptvSimple:
             fdesc.write('#EXTM3U\n'.encode('utf-8'))
 
             for channel in channels:
+                header = '#EXTINF:-1'
+                header += ' tvg-id="{id}"'.format(id=channel.get('id'))
+                header += ' tvg-name="{name}"'.format(name=channel.get('name'))
+                if channel.get('logo'):
+                    header += ' tvg-logo="{logo}"'.format(logo=channel.get('logo'))
                 if channel.get('radio'):
-                    header = '#EXTINF:0 tvg-id="{id}" tvg-logo="{logo}" tvg-name="{name}" radio="true",{name}\n'
-                else:
-                    header = '#EXTINF:0 tvg-id="{id}" tvg-logo="{logo}" tvg-name="{name}",{name}\n'
+                    header += ' radio="true"'
+                header += ',' + channel.get('name') + "\n"
 
-                fdesc.write(header.format(id=channel.get('id'), logo=channel.get('logo'), name=channel.get('name')).encode('utf-8'))
+                fdesc.write(header.encode('utf-8'))
                 fdesc.write("{url}\n".format(url=channel.get('stream')).encode('utf-8'))
                 fdesc.write("\n".encode('utf-8'))
 
