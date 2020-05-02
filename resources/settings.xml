@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="30800"> <!-- IPTV Simple -->
+        <setting label="30801" type="lsep"/> <!-- Configuration -->
+        <setting label="30802" type="action" action="RunScript(special://home/addons/service.iptv.manager/functions.py,setup-iptv-simple)"/> <!-- Configure IPTV Simple automatically -->
+    </category>
+</settings>

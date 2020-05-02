@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+### SETTINGS
+msgctxt "#30800"
+msgid "IPTV Simple"
+msgstr ""
+
+msgctxt "#30801"
+msgid "Configuration"
+msgstr ""
+
+msgctxt "#30802"
+msgid "Configure IPTV Simple automatically"
+msgstr ""
+

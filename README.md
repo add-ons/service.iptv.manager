@@ -20,9 +20,7 @@ know the endpoints for the Channel and EPG data.
 {
     "version": 1,
     "channels": "plugin://plugin.video.example/iptv/channels?output=$FILE",
-    "channels_format": "json",
     "epg": "plugin://plugin.video.example/iptv/epg?output=$FILE",
-    "epg_format": "xmltv"
 }
 ```
 
@@ -30,9 +28,7 @@ know the endpoints for the Channel and EPG data.
 |-------------------|----------|----------------------------------------------------------------------|
 | `version`         | Yes      | Always `1`.                                                          |
 | `channels`        | Yes      | Endpoint for Channel data.                                           |
-| `channels_format` | Yes      | Format for Channel data, can be `json` or `m3u` (default is `json`). |
 | `epg`             | No       | Endpoint for EPG data.                                               |
-| `epg_format`      | No       | Format for EPG data, can be `json` or `xmltv` (default is `json`).   |
 
 There are two possible method to provide the data for channels and EPG:
 * A local file (example: `iptv.channels.json`)
@@ -54,82 +50,95 @@ There are two possible method to provide the data for channels and EPG:
   You can also point to an online URL that contains the data.
 
 ### Channel data
-
 IPTV Manager will periodically use the `channels` endpoint defined in the `iptv.json` file to know about the channels
 that the addon provides.
 
-The format of this channel data will be based on the `channels_format` parameter.
+Two formats are supported, and they are auto-detected.
 
-#### M3U (`channels_format` parameter is `m3u`)
-
+#### M3U
 This is a normal `m3u` playlist as documented by IPTV Simple [here](https://github.com/kodi-pvr/pvr.iptvsimple/blob/Matrix/README.md#m3u-format-elements).
 
-#### JSON (`channels_format` parameter is `json`)
+#### JSON
+This is a `json` format to more easily define your channels without having to create a `m3u` playlist.
 
 ```json
-[
-  {
-    "id": "channel-one.be",
-    "name": "Channel One",
-    "logo": "resources/logos/channel-one.png",
-    "stream": "plugin://plugin.video.example/stream/channel-one"
-  },
-  {
-    "id": "channel-two.be",
-    "name": "Channel Two",
-    "logo": "https://www.example.com/logos/channel-two.png",
-    "stream": "https://www.example.com/steams/channel-two.m3u8"
-  },
-  {
-    "id": "radio-one.be",
-    "name": "Radio One",
-    "logo": "resources/logos/radio-one.png",
-    "stream": "plugin://plugin.video.example/stream/radio-one",
-    "radio": true
-  }
-]
+{
+  "version": 1,
+  "streams": [
+    {
+      "id": "channel-one.be",
+      "name": "Channel One",
+      "group": "Belgium TV",
+      "logo": "resources/logos/channel-one.png",
+      "stream": "plugin://plugin.video.example/stream/channel-one"
+    },
+    {
+      "id": "channel-two.be",
+      "name": "Channel Two",
+      "group": "Belgium TV",
+      "logo": "https://www.example.com/logos/channel-two.png",
+      "stream": "https://www.example.com/steams/channel-two.m3u8"
+    },
+    {
+      "id": "radio-one.be",
+      "name": "Radio One",
+      "group": "Belgium Radio",
+      "logo": "resources/logos/radio-one.png",
+      "stream": "plugin://plugin.video.example/stream/radio-one",
+      "radio": true
+    }
+  ]
+}
 ```
 
 | Attribute  | Required | Description                                                                                   |
 |------------|----------|-----------------------------------------------------------------------------------------------|
 | `id`       | Yes      | An unique identifier for the channel. This will be used to link with the EPG data.            |
 | `name`     | Yes      | The name of the channel.                                                                      |
-| `logo`     | Yes      | A logo for the channel. This can be an URL or a local file relative to the Add-on root.       |
 | `stream`   | Yes      | The endpoint for the Live stream. This can be an online HLS stream or a `plugin://` endpoint. |
+| `preset`   | No       | A preferred channel number.                                                                   |
+| `group`    | No       | A group for the channel. This is probably the network or Add-on name.                         |
+| `logo`     | No       | A logo for the channel. This can be an URL or a local file relative to the Add-on root.       |
 | `radio`    | No       | Indicates if this channel is a Radio channel. (default `false`)                               |
 
 ### EPG data
-
 IPTV Manager will periodically use the `epg` endpoint defined in the `iptv.json` file to update the EPG of the channels. 
 The key must match the `id` of the channel from the Channel JSON. 
 
 > In case the constructing of this file takes a long time, it might be beneficial to create this in a background service
 > and cache the results. This cached result can then be passed when IPTV Manager asks for an update. 
 
-#### XMLTV (`epg_format` parameter is `xmltv`)
-
+#### XMLTV
 This is a normal `xmltv` file as documented by IPTV Simple [here](https://github.com/kodi-pvr/pvr.iptvsimple/blob/Matrix/README.md#xmltv-format-elemnents).
 
-#### JSON (`epg_format` parameter is `json`)
+#### JSON
+This is a `json` format to more easily define your channels without having to create a `xmltv` file.
 
 ```json
 {
-  "channel-one.be": [
-    {
-      "start": "2020-04-01T12:45:00",
-      "stop": "2020-04-01T12:50:00",
-      "title": "My Show",
-      "description": "Description of My Show",
-      "subtitle": "Episode name for My Show",
-      "episode": "S01E05",
-      "image": "https://www.example.com/shows/my-show/s01e05.png",
-      "date": "2018-04-01"
-    },
-    {...}
-  ],
-  "channel-two.be": [
-    {...}
-  ]
+  "version": 1,
+  "epg": {
+    "channel-one.be": [
+      {
+        "start": "2020-04-01T12:45:00",
+        "stop": "2020-04-01T12:50:00",
+        "title": "My Show",
+        "description": "Description of My Show",
+        "subtitle": "Episode name for My Show",
+        "episode": "S01E05",
+        "image": "https://www.example.com/shows/my-show/s01e05.png",
+        "date": "2018-04-01"
+      },
+      {},
+      {},
+      {}
+    ],
+    "channel-two.be": [
+      {},
+      {},
+      {}
+    ]
+  }
 }
 ```
 

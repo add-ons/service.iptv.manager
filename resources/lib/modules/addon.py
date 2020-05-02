@@ -15,6 +15,8 @@ _LOGGER = logging.getLogger(__name__)
 
 IPTV_FILENAME = 'iptv.json'
 IPTV_VERSION = 1
+CHANNELS_VERSION = 1
+EPG_VERSION = 1
 
 
 class Addon:
@@ -68,20 +70,29 @@ class Addon:
         """ Get channel data from this add-on """
         try:
             data = self._get_data_from_addon(self.channels_uri)
+            _LOGGER.debug(data)
         except Exception as exc:  # pylint: disable=broad-except
             _LOGGER.error('Something went wrong while calling %s: %s', self.addon_id, exc)
             return []
 
+        if data.get('version', 1) > CHANNELS_VERSION:
+            _LOGGER.warning('Skipping %s since it uses an unsupported version: %d', self.channels_uri, data.get('version'))
+            return []
+
         channels = []
-        for channel in data:
+        for channel in data.get('streams', []):
             # Check for required fields
-            if not channel.get('id') or not channel.get('name') or not channel.get('logo') or not channel.get('stream'):
+            if not channel.get('id') or not channel.get('name') or not channel.get('stream'):
                 _LOGGER.warning('Skipping channel since it is incomplete: %s', channel)
                 continue
 
             # Fix logo path to be absolute
-            if not (channel.get('logo').startswith('http://') or channel.get('logo').startswith('https://')):
-                channel['logo'] = os.path.join(self.addon_path, channel.get('logo'))
+            if channel.get('logo'):
+                if not (channel.get('logo').startswith('http://') or channel.get('logo').startswith('https://') or channel.get('logo').startswith('special://')):
+                    channel['logo'] = os.path.join(self.addon_path, channel.get('logo'))
+            else:
+                # TODO: use the logo of the addon
+                pass
 
             channels.append(channel)
 
@@ -89,8 +100,23 @@ class Addon:
 
     def get_epg(self):
         """ Get epg data from this add-on """
-        data = self._get_data_from_addon(self.epg_uri)
-        return data
+        try:
+            data = self._get_data_from_addon(self.epg_uri)
+            _LOGGER.debug(data)
+        except Exception as exc:  # pylint: disable=broad-except
+            _LOGGER.error('Something went wrong while calling %s: %s', self.addon_id, exc)
+            return {}
+
+        if data.get('version', 1) > CHANNELS_VERSION:
+            _LOGGER.warning('Skipping EPG from %s since it uses an unsupported version: %d', self.epg_uri, data.get('version'))
+            return {}
+
+        # Check for required fields
+        if not data.get('epg'):
+            _LOGGER.warning('Skipping EPG from %s since it is incomplete', self.epg_uri)
+            return {}
+
+        return data['epg']
 
     def _get_data_from_addon(self, uri):
         """ Request data from the specified URI """
@@ -136,7 +162,7 @@ class Addon:
         return data
 
     @staticmethod
-    def _wait_for_data(filename, timeout=30):
+    def _wait_for_data(filename, timeout=60):
         """ Wait for data to arrive in the specified file """
         deadline = time.time() + timeout
         while time.time() < deadline:
