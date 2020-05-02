@@ -3,8 +3,8 @@ This Service Add-on integrates Live TV and Radio Channels from supported Add-ons
 It will periodically poll those IPTV Add-ons for Channels and EPG data.
 
 The principle is based on the [IPTV Merge](https://www.matthuisman.nz/2019/02/iptv-merge-kodi-add-on.html) addon from 
-Matt Huisman, but with this integration, the Add-ons don't have to generate an m3u file or XMLTV file themselves, but
-can work with structured JSON data. 
+Matt Huisman, but with this integration, the Add-ons don't have to generate an `m3u` file or `xmltv` file themselves, 
+but can work with structured JSON data. 
 
 Supported Add-ons:
 * [VTM GO (plugin.video.vtm.go)](https://github.com/add-ons/plugin.video.vtm.go/)
@@ -20,17 +20,21 @@ know the endpoints for the Channel and EPG data.
 {
     "version": 1,
     "channels": "plugin://plugin.video.example/iptv/channels?output=$FILE",
-    "epg": "plugin://plugin.video.example/iptv/epg?output=$FILE"
+    "channels_format": "json",
+    "epg": "plugin://plugin.video.example/iptv/epg?output=$FILE",
+    "epg_format": "xmltv"
 }
 ```
 
-| Attribute  | Required | Description                |
-|------------|----------|----------------------------|
-| `version`  | Yes      | Always `1`.                |
-| `channels` | Yes      | Endpoint for Channel data. |
-| `epg`      | No       | Endpoint for EPG data.     |
+| Attribute         | Required | Description                                                          |
+|-------------------|----------|----------------------------------------------------------------------|
+| `version`         | Yes      | Always `1`.                                                          |
+| `channels`        | Yes      | Endpoint for Channel data.                                           |
+| `channels_format` | Yes      | Format for Channel data, can be `json` or `m3u` (default is `json`). |
+| `epg`             | No       | Endpoint for EPG data.                                               |
+| `epg_format`      | No       | Format for EPG data, can be `json` or `xmltv` (default is `json`).   |
 
-There are 3 possible method to provide the data for channels and EPG:
+There are two possible method to provide the data for channels and EPG:
 * A local file (example: `iptv.channels.json`)
   This is the preferred method if the list of channels are statically defined. The file path is relative to the root of
   the Add-on.
@@ -49,10 +53,18 @@ There are 3 possible method to provide the data for channels and EPG:
 * A web endpoint (example: `https://www.example.com/channels.json`)
   You can also point to an online URL that contains the data.
 
-### Channel JSON
+### Channel data
 
 IPTV Manager will periodically use the `channels` endpoint defined in the `iptv.json` file to know about the channels
 that the addon provides.
+
+The format of this channel data will be based on the `channels_format` parameter.
+
+#### M3U (`channels_format` parameter is `m3u`)
+
+This is a normal `m3u` playlist as documented by IPTV Simple [here](https://github.com/kodi-pvr/pvr.iptvsimple/blob/Matrix/README.md#m3u-format-elements).
+
+#### JSON (`channels_format` parameter is `json`)
 
 ```json
 [
@@ -86,13 +98,19 @@ that the addon provides.
 | `stream`   | Yes      | The endpoint for the Live stream. This can be an online HLS stream or a `plugin://` endpoint. |
 | `radio`    | No       | Indicates if this channel is a Radio channel. (default `false`)                               |
 
-### EPG JSON
+### EPG data
 
 IPTV Manager will periodically use the `epg` endpoint defined in the `iptv.json` file to update the EPG of the channels. 
 The key must match the `id` of the channel from the Channel JSON. 
 
 > In case the constructing of this file takes a long time, it might be beneficial to create this in a background service
 > and cache the results. This cached result can then be passed when IPTV Manager asks for an update. 
+
+#### XMLTV (`epg_format` parameter is `xmltv`)
+
+This is a normal `xmltv` file as documented by IPTV Simple [here](https://github.com/kodi-pvr/pvr.iptvsimple/blob/Matrix/README.md#xmltv-format-elemnents).
+
+#### JSON (`epg_format` parameter is `json`)
 
 ```json
 {
