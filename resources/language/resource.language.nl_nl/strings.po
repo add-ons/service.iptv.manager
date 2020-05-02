@@ -16,6 +16,6 @@ msgid "Configuration"
 msgstr "Configuratie"
 
 msgctxt "#30802"
-msgid "Configure IPTV Simple automatically"
-msgstr "Configureer IPTV Simple automatisch"
+msgid "Configure IPTV Simple automatically..."
+msgstr "Configureer IPTV Simple automatisch..."
 

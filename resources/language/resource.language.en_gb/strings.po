@@ -15,6 +15,6 @@ msgid "Configuration"
 msgstr ""
 
 msgctxt "#30802"
-msgid "Configure IPTV Simple automatically"
+msgid "Configure IPTV Simple automatically..."
 msgstr ""
 

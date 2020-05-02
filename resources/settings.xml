@@ -2,6 +2,6 @@
 <settings>
     <category label="30800"> <!-- IPTV Simple -->
         <setting label="30801" type="lsep"/> <!-- Configuration -->
-        <setting label="30802" type="action" action="RunScript(service.iptv.manager,setup-iptv-simple)"/> <!-- Configure IPTV Simple automatically -->
+        <setting label="30802" type="action" action="RunScript(service.iptv.manager,setup-iptv-simple)"/> <!-- Configure IPTV Simple automatically... -->
     </category>
 </settings>
