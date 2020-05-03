@@ -135,7 +135,7 @@ class Addon:
             kodiutils.execute_builtin('RunPlugin', uri)
 
             # Wait for data
-            result = self._wait_for_data(sock, 30)
+            result = self._wait_for_data(sock)
 
             # Load data
             data = json.loads(result)
@@ -176,24 +176,29 @@ class Addon:
         return sock
 
     @staticmethod
-    def _wait_for_data(sock, timeout=60):
+    def _wait_for_data(sock, timeout=10):
         """ Wait for data to arrive on the socket """
-        # Set our timeout
+        # Set a connection timeout
+        # The remote and should connect back as soon as possible so we know that the request is being processed
         sock.settimeout(timeout)
 
         # Accept one client
         try:
             _LOGGER.debug('Waiting for a connection on port %s...', sock.getsockname()[1])
             conn, addr = sock.accept()
+            _LOGGER.debug('Connected to %s:%s! Waiting for result...', addr[0], addr[1])
 
-            # Read until eof
-            _LOGGER.debug('Connected to %s:%s! Reading result...', addr[0], addr[1])
+            # Read until the remote end closes the connection
             buffer = ''
             while True:
-                chunk = conn.recv(65535)
+                chunk = conn.recv(1024)
                 if not chunk:
                     break
                 buffer += chunk
+
+            if not buffer:
+                # We got an empty reply, this means that something didn't go according to plan
+                raise Exception('Something went wrong in the other Add-on')
 
             return buffer
 
@@ -202,5 +207,5 @@ class Addon:
 
         finally:
             # Close our socket
+            _LOGGER.debug('Closing socket on port %s', sock.getsockname()[1])
             sock.close()
-
