@@ -6,8 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 import json
 import logging
 import os
-import tempfile
-import time
+import socket
 
 from resources.lib import kodiutils
 
@@ -68,6 +67,7 @@ class Addon:
 
     def get_channels(self):
         """ Get channel data from this add-on """
+        _LOGGER.info('Requesting channels from %s...', self.channels_uri)
         try:
             data = self._get_data_from_addon(self.channels_uri)
             _LOGGER.debug(data)
@@ -103,6 +103,7 @@ class Addon:
         if self.epg_uri is None:
             return {}
 
+        _LOGGER.info('Requesting epg from %s...', self.epg_uri)
         try:
             data = self._get_data_from_addon(self.epg_uri)
             _LOGGER.debug(data)
@@ -126,21 +127,18 @@ class Addon:
         if uri.startswith('plugin://'):
             # Plugin path
 
-            # Make request
-            _, temp_file = tempfile.mkstemp()
-            uri = uri.replace('$FILE', temp_file)
+            # Prepare data
+            sock = self._prepare_for_data()
+            uri = uri.replace('$PORT', str(sock.getsockname()[1]))
+
+            _LOGGER.info('Executing RunPlugin(%s)...', uri)
             kodiutils.execute_builtin('RunPlugin', uri)
 
             # Wait for data
-            self._wait_for_data(temp_file, 30)
+            result = self._wait_for_data(sock, 30)
 
             # Load data
-            _LOGGER.info('Loading reply from %s', temp_file)
-            with open(temp_file) as fdesc:
-                data = json.load(fdesc)
-
-            # Remove temp file
-            os.unlink(temp_file)
+            data = json.loads(result)
 
             return data
 
@@ -165,21 +163,44 @@ class Addon:
         return data
 
     @staticmethod
-    def _wait_for_data(filename, timeout=60):
-        """ Wait for data to arrive in the specified file """
-        deadline = time.time() + timeout
-        while time.time() < deadline:
+    def _prepare_for_data():
+        """ Prepare ourselves so we can receive data """
+        # Bind on localhost on a free port above 1024
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind(('localhost', 0))
 
-            # Check if the file disappeared. This indicates that something went wrong.
-            if not os.path.exists(filename):
-                raise Exception('Error in other Add-on')
+        _LOGGER.debug('Bound on port %s...', sock.getsockname()[1])
 
-            # Check if the file got data. This indicates we have a result.
-            if os.stat(filename).st_size > 0:
-                return True
+        # Listen for one connection
+        sock.listen(1)
+        return sock
 
-            # Wait a bit
-            _LOGGER.debug('Waiting for %s... %s', filename, time.time())
-            time.sleep(0.5)
+    @staticmethod
+    def _wait_for_data(sock, timeout=60):
+        """ Wait for data to arrive on the socket """
+        # Set our timeout
+        sock.settimeout(timeout)
 
-        raise Exception('Timout waiting on reply from other Add-on')
+        # Accept one client
+        try:
+            _LOGGER.debug('Waiting for a connection on port %s...', sock.getsockname()[1])
+            conn, addr = sock.accept()
+
+            # Read until eof
+            _LOGGER.debug('Connected to %s:%s! Reading result...', addr[0], addr[1])
+            buffer = ''
+            while True:
+                chunk = conn.recv(65535)
+                if not chunk:
+                    break
+                buffer += chunk
+
+            return buffer
+
+        except socket.timeout:
+            raise Exception('Timout waiting on reply from other Add-on')
+
+        finally:
+            # Close our socket
+            sock.close()
+
