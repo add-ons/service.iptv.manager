@@ -82,15 +82,13 @@ class Addon:
         channels = []
         for channel in data.get('streams', []):
             # Check for required fields
-            if not channel.get('id') or not channel.get('name') or not channel.get('stream'):
+            if not channel.get('name') or not channel.get('stream'):
                 _LOGGER.warning('Skipping channel since it is incomplete: %s', channel)
                 continue
 
             # Fix logo path to be absolute
             if channel.get('logo'):
-                if not (channel.get('logo').startswith('http://')
-                        or channel.get('logo').startswith('https://')
-                        or channel.get('logo').startswith('special://')):
+                if not channel.get('logo').startswith(('http://', 'https://', 'special://', '/')):
                     channel['logo'] = os.path.join(self.addon_path, channel.get('logo'))
             else:
                 # TODO: use the logo of the addon
@@ -102,6 +100,9 @@ class Addon:
 
     def get_epg(self):
         """ Get epg data from this add-on """
+        if self.epg_uri is None:
+            return {}
+
         try:
             data = self._get_data_from_addon(self.epg_uri)
             _LOGGER.debug(data)
@@ -143,7 +144,7 @@ class Addon:
 
             return data
 
-        if uri.startswith('http://') or uri.startswith('https://'):
+        if uri.startswith(('http://', 'https://')):
             # HTTP(S) path
             # TODO: implement requests to fetch data
             return None

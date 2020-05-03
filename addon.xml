@@ -5,7 +5,7 @@
         <import addon="script.module.dateutil" version="2.6.0"/>
     </requires>
     <extension point="xbmc.service" library="service.py"/>
-	<extension point="xbmc.python.library" library="functions.py" />
+	<extension point="xbmc.python.library" library="default.py" />
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Integrate IPTV Channels from other Add-ons in the Kodi PVR</summary>
         <description lang="en_GB">This add-on integrates IPTV Channels from other Add-ons in the Kodi PVR.</description>

@@ -27,8 +27,9 @@ def refresh():
     _LOGGER.debug('TODO: refresh')
 
 
-def run(function, *args):
+def run(args):
     """ Run the function """
+    function = args[1]
     function_map = {
         'setup-iptv-simple': setup_iptv_simple,
         'refresh': refresh,

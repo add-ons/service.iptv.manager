@@ -21,6 +21,8 @@ IPTV_SIMPLE_EPG = 'epg.xml'
 
 class IptvSimple:
     """ Helper class to setup IPTV Simple """
+    def __init__(self):
+        """ Init """
 
     @classmethod
     def setup(cls):
@@ -84,21 +86,22 @@ class IptvSimple:
         playlist_path = os.path.join(output_dir, IPTV_SIMPLE_PLAYLIST)
 
         with open(playlist_path + '.tmp', 'wb') as fdesc:
-            fdesc.write('#EXTM3U\n'.encode('utf-8'))
+            m3u8_data = '#EXTM3U\n'
 
             for channel in channels:
-                header = '#EXTINF:-1'
-                header += ' tvg-id="{id}"'.format(id=channel.get('id'))
-                header += ' tvg-name="{name}"'.format(name=channel.get('name'))
+                m3u8_data += '#EXTINF:-1 tvg-name="{name}"'.format(**channel)
+                if channel.get('id'):
+                    m3u8_data += ' tvg-id="{id}"'.format(**channel)
                 if channel.get('logo'):
-                    header += ' tvg-logo="{logo}"'.format(logo=channel.get('logo'))
+                    m3u8_data += ' tvg-logo="{logo}"'.format(**channel)
+                if channel.get('preset'):
+                    m3u8_data += ' tvg-chno="{preset}"'.format(**channel)
+                if channel.get('group'):
+                    m3u8_data += ' group-title="{group}"'.format(**channel)
                 if channel.get('radio'):
-                    header += ' radio="true"'
-                header += ',' + channel.get('name') + "\n"
-
-                fdesc.write(header.encode('utf-8'))
-                fdesc.write("{url}\n".format(url=channel.get('stream')).encode('utf-8'))
-                fdesc.write("\n".encode('utf-8'))
+                    m3u8_data += ' radio="true"'
+                m3u8_data += ',{name}\n{stream}\n\n'.format(**channel)
+            fdesc.write(m3u8_data.encode('utf-8'))
 
         # Move new file to the right place
         os.rename(playlist_path + '.tmp', playlist_path)
