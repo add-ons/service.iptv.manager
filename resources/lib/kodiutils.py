@@ -8,54 +8,10 @@ import logging
 import xbmc
 import xbmcaddon
 import xbmcgui
-import xbmcplugin
 
 ADDON = xbmcaddon.Addon()
 
-SORT_METHODS = dict(
-    unsorted=xbmcplugin.SORT_METHOD_UNSORTED,
-    label=xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS,
-    title=xbmcplugin.SORT_METHOD_TITLE,
-    episode=xbmcplugin.SORT_METHOD_EPISODE,
-    duration=xbmcplugin.SORT_METHOD_DURATION,
-    year=xbmcplugin.SORT_METHOD_VIDEO_YEAR,
-    date=xbmcplugin.SORT_METHOD_DATE,
-)
-DEFAULT_SORT_METHODS = [
-    'unsorted', 'title'
-]
-
 _LOGGER = logging.getLogger(__name__)
-
-
-class TitleItem:
-    """ This helper object holds all information to be used with Kodi xbmc's ListItem object """
-
-    def __init__(self, title, path=None, art_dict=None, info_dict=None, prop_dict=None, stream_dict=None, context_menu=None, subtitles_path=None,
-                 is_playable=False):
-        """ The constructor for the TitleItem class
-        :type title: str
-        :type path: str
-        :type art_dict: dict
-        :type info_dict: dict
-        :type prop_dict: dict
-        :type stream_dict: dict
-        :type context_menu: list[tuple[str, str]]
-        :type subtitles_path: list[str]
-        :type is_playable: bool
-        """
-        self.title = title
-        self.path = path
-        self.art_dict = art_dict
-        self.info_dict = info_dict
-        self.stream_dict = stream_dict
-        self.prop_dict = prop_dict
-        self.context_menu = context_menu
-        self.subtitles_path = subtitles_path
-        self.is_playable = is_playable
-
-    def __repr__(self):
-        return "%r" % self.__dict__
 
 
 class SafeDict(dict):
@@ -111,106 +67,6 @@ def addon_profile(addon=None):
     if not addon:
         addon = ADDON
     return to_unicode(xbmc.translatePath(addon.getAddonInfo('profile')))
-
-# def url_for(name, *args, **kwargs):
-#     """Wrapper for routing.url_for() to lookup by name"""
-#     import resources.lib.addon as addon
-#     return addon.routing.url_for(getattr(addon, name), *args, **kwargs)
-
-
-# def show_listing(title_items, category=None, sort=None, content=None, cache=True):
-#     """Show a virtual directory in Kodi"""
-#     from resources.lib.addon import routing
-#
-#     if content:
-#         # content is one of: files, songs, artists, albums, movies, tvshows, episodes, musicvideos, videos, images, games
-#         xbmcplugin.setContent(routing.handle, content=content)
-#
-#     # Jump through hoops to get a stable breadcrumbs implementation
-#     category_label = ''
-#     if category:
-#         if not content:
-#             category_label = addon_name() + ' / '
-#         if isinstance(category, int):
-#             category_label += localize(category)
-#         else:
-#             category_label += category
-#     elif not content:
-#         category_label = addon_name()
-#
-#     xbmcplugin.setPluginCategory(handle=routing.handle, category=category_label)
-#
-#     # Add all sort methods to GUI (start with preferred)
-#     if sort is None:
-#         sort = DEFAULT_SORT_METHODS
-#     elif not isinstance(sort, list):
-#         sort = [sort] + DEFAULT_SORT_METHODS
-#
-#     for key in sort:
-#         xbmcplugin.addSortMethod(handle=routing.handle, sortMethod=SORT_METHODS[key])
-#
-#     # Add the listings
-#     listing = []
-#     for title_item in title_items:
-#         # Three options:
-#         #  - item is a virtual directory/folder (not playable, path)
-#         #  - item is a playable file (playable, path)
-#         #  - item is non-actionable item (not playable, no path)
-#         is_folder = bool(not title_item.is_playable and title_item.path)
-#         is_playable = bool(title_item.is_playable and title_item.path)
-#
-#         list_item = xbmcgui.ListItem(label=title_item.title, path=title_item.path)
-#
-#         if title_item.prop_dict:
-#             list_item.setProperties(title_item.prop_dict)
-#         list_item.setProperty(key='IsPlayable', value='true' if is_playable else 'false')
-#
-#         list_item.setIsFolder(is_folder)
-#
-#         if title_item.art_dict:
-#             list_item.setArt(title_item.art_dict)
-#
-#         if title_item.info_dict:
-#             # type is one of: video, music, pictures, game
-#             list_item.setInfo(type='video', infoLabels=title_item.info_dict)
-#
-#         if title_item.stream_dict:
-#             # type is one of: video, audio, subtitle
-#             list_item.addStreamInfo('video', title_item.stream_dict)
-#
-#         if title_item.context_menu:
-#             list_item.addContextMenuItems(title_item.context_menu)
-#
-#         is_folder = bool(not title_item.is_playable and title_item.path)
-#         url = title_item.path if title_item.path else None
-#         listing.append((url, list_item, is_folder))
-#
-#     succeeded = xbmcplugin.addDirectoryItems(routing.handle, listing, len(listing))
-#     xbmcplugin.endOfDirectory(routing.handle, succeeded, cacheToDisc=cache)
-
-
-# def play(stream, title=None, art_dict=None, info_dict=None, prop_dict=None):
-#     """Play the given stream"""
-#     from resources.lib.addon import routing
-#
-#     play_item = xbmcgui.ListItem(label=title, path=stream)
-#     if art_dict:
-#         play_item.setArt(art_dict)
-#     if info_dict:
-#         play_item.setInfo(type='video', infoLabels=info_dict)
-#     if prop_dict:
-#         play_item.setProperties(prop_dict)
-#
-#     # Setup Inputstream Adaptive
-#     if kodi_version_major() >= 19:
-#         play_item.setProperty('inputstream', 'inputstream.adaptive')
-#     else:
-#         play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
-#     play_item.setProperty('inputstream.adaptive.manifest_type', 'hls')
-#     play_item.setMimeType('application/vnd.apple.mpegurl')
-#     play_item.setContentLookup(False)
-#
-#     xbmcplugin.setResolvedUrl(routing.handle, True, listitem=play_item)
 
 
 def get_search_string(heading='', message=''):
@@ -475,12 +331,6 @@ def container_update(url):
     else:
         # URL is a mandatory argument for Container.Update, use Container.Refresh instead
         container_refresh()
-
-
-# def end_of_directory():
-#     """Close a virtual directory, required to avoid a waiting Kodi"""
-#     from resources.lib.addon import routing
-#     xbmcplugin.endOfDirectory(handle=routing.handle, succeeded=False, updateListing=False, cacheToDisc=False)
 
 
 def jsonrpc(*args, **kwargs):

@@ -1,0 +1,38 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: nl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+### MESSAGES
+msgctxt "#30700"
+msgid "Are you sure you want to setup IPTV Simple for the use with IPTV Manager? Any existing configuration of IPTV Simple will be overwritten."
+msgstr "Bent u zeker om IPTV Simple in te stellen om te gebruiken met IPTV Manager? De bestaande configuratie van IPTV Simple zal worden overschreven."
+
+msgctxt "#30701"
+msgid "The configuration of IPTV Simple is completed!"
+msgstr "De configuratie van IPTV Simple is uitgevoerd!"
+
+msgctxt "#30702"
+msgid "The configuration of IPTV Simple has failed. Please check the log files for more information."
+msgstr "De configuratie van IPTV Simple is mislukt. Gelieve de logbestanden te bekijken voor meer informatie."
+
+### SETTINGS
+msgctxt "#30800"
+msgid "IPTV Simple"
+msgstr "IPTV Simple"
+
+msgctxt "#30801"
+msgid "Configuration"
+msgstr "Configuratie"
+
+msgctxt "#30802"
+msgid "Configure IPTV Simple automatically…"
+msgstr "Configureer IPTV Simple automatisch…"
+
+msgctxt "#30803"
+msgid "Open IPTV Simple settings…"
+msgstr "Open de IPTV Simple instellingen…"
+

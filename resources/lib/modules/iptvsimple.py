@@ -21,6 +21,8 @@ IPTV_SIMPLE_EPG = 'epg.xml'
 
 class IptvSimple:
     """ Helper class to setup IPTV Simple """
+    def __init__(self):
+        """ Init """
 
     @classmethod
     def setup(cls):
@@ -29,8 +31,9 @@ class IptvSimple:
             # Install IPTV Simple
             kodiutils.execute_builtin('InstallAddon', IPTV_SIMPLE_ID)
             addon = kodiutils.get_addon(IPTV_SIMPLE_ID)
-        except:
-            raise Exception('Could not enable IPTV Simple.')
+        except Exception as exc:  # pylint: disable=broad-except
+            _LOGGER.warning('Could not setup IPTV Simple: %s', str(exc))
+            return False
 
         # Deactivate IPTV Simple to hide the "Needs to be restarted" messages
         cls._deactivate()
@@ -51,6 +54,8 @@ class IptvSimple:
 
         # Activate IPTV Simple
         cls._activate()
+
+        return True
 
     @classmethod
     def restart(cls):
@@ -81,17 +86,22 @@ class IptvSimple:
         playlist_path = os.path.join(output_dir, IPTV_SIMPLE_PLAYLIST)
 
         with open(playlist_path + '.tmp', 'wb') as fdesc:
-            fdesc.write('#EXTM3U\n'.encode('utf-8'))
+            m3u8_data = '#EXTM3U\n'
 
             for channel in channels:
+                m3u8_data += '#EXTINF:-1 tvg-name="{name}"'.format(**channel)
+                if channel.get('id'):
+                    m3u8_data += ' tvg-id="{id}"'.format(**channel)
+                if channel.get('logo'):
+                    m3u8_data += ' tvg-logo="{logo}"'.format(**channel)
+                if channel.get('preset'):
+                    m3u8_data += ' tvg-chno="{preset}"'.format(**channel)
+                if channel.get('group'):
+                    m3u8_data += ' group-title="{group}"'.format(**channel)
                 if channel.get('radio'):
-                    header = '#EXTINF:0 tvg-id="{id}" tvg-logo="{logo}" tvg-name="{name}" radio="true",{name}\n'
-                else:
-                    header = '#EXTINF:0 tvg-id="{id}" tvg-logo="{logo}" tvg-name="{name}",{name}\n'
-
-                fdesc.write(header.format(id=channel.get('id'), logo=channel.get('logo'), name=channel.get('name')).encode('utf-8'))
-                fdesc.write("{url}\n".format(url=channel.get('stream')).encode('utf-8'))
-                fdesc.write("\n".encode('utf-8'))
+                    m3u8_data += ' radio="true"'
+                m3u8_data += ',{name}\n{stream}\n\n'.format(**channel)
+            fdesc.write(m3u8_data.encode('utf-8'))
 
         # Move new file to the right place
         os.rename(playlist_path + '.tmp', playlist_path)

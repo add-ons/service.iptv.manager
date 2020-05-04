@@ -23,11 +23,7 @@ class BackgroundService(Monitor):
 
     def run(self):
         """ Background loop for maintenance tasks """
-        _LOGGER.info('Service started')
-
-        # Configure IPTV Simple
-        # TODO: we probably don't have to do this every time, or maybe only check if the configuration is wrong
-        IptvSimple.setup()
+        _LOGGER.debug('Service started')
 
         # Do an initial update
         # TODO: we have to schedule this somehow
@@ -38,7 +34,7 @@ class BackgroundService(Monitor):
             if self.waitForAbort(10):
                 break
 
-        _LOGGER.info('Service stopped')
+        _LOGGER.debug('Service stopped')
 
     @staticmethod
     def update():
