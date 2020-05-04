@@ -21,8 +21,9 @@ EPG_VERSION = 1
 class Addon:
     """ Helper class for Addon communication """
 
-    def __init__(self, addon_id, channels_uri, epg_uri):
+    def __init__(self, addon_id, addon_obj, channels_uri, epg_uri):
         self.addon_id = addon_id
+        self.addon_obj = addon_obj
         self.channels_uri = channels_uri
         self.epg_uri = epg_uri
 
@@ -37,30 +38,16 @@ class Addon:
         addons = []
         for row in result['result']['addons']:
             addon = kodiutils.get_addon(row['addonid'])
-            addon_path = kodiutils.addon_path(addon)
-            addon_iptv_config = os.path.join(addon_path, IPTV_FILENAME)
 
-            # Check if this addon has an iptv.json
-            if not os.path.exists(addon_iptv_config):
-                continue
-
-            # Read iptv.json
-            with open(addon_iptv_config) as fdesc:
-                data = json.load(fdesc)
-
-            # Check version
-            if data.get('version', 1) > IPTV_VERSION:
-                _LOGGER.warning('Skipping %s since it uses an unsupported version of iptv.json: %d', row['addonid'], data.get('version'))
-                continue
-
-            if not data.get('channels'):
-                _LOGGER.warning('Skipping %s since it has no channels defined', row['addonid'])
+            # Check if add-on supports IPTV Manager
+            if addon.getSetting('iptv.enabled') != 'true':
                 continue
 
             addons.append(Addon(
                 addon_id=row['addonid'],
-                channels_uri=data.get('channels'),
-                epg_uri=data.get('epg'),
+                addon_obj=addon,
+                channels_uri=addon.getSetting('iptv.channels_uri'),
+                epg_uri=addon.getSetting('iptv.epg_uri'),
             ))
 
         return addons
@@ -68,6 +55,9 @@ class Addon:
     def get_channels(self):
         """ Get channel data from this add-on """
         _LOGGER.info('Requesting channels from %s...', self.channels_uri)
+        if not self.channels_uri:
+            return {}
+
         try:
             data = self._get_data_from_addon(self.channels_uri)
             _LOGGER.debug(data)
@@ -94,13 +84,17 @@ class Addon:
                 # TODO: use the logo of the addon
                 pass
 
+            # Add add-on name as group
+            if not channel.get('group'):
+                channel['group'] = kodiutils.addon_name(self.addon_obj)
+
             channels.append(channel)
 
         return channels
 
     def get_epg(self):
         """ Get epg data from this add-on """
-        if self.epg_uri is None:
+        if not self.epg_uri:
             return {}
 
         _LOGGER.info('Requesting epg from %s...', self.epg_uri)
