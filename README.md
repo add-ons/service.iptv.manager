@@ -1,11 +1,11 @@
 # IPTV Manager
-This Service Add-on allows supported IPTV Add-ons to integrates their Live TV and Radio Channels in the Kodi PVR. 
-IPTV Manager will periodically poll those Add-ons for Channels and EPG data, and generate a new `m3u` playlist and
-`xmltv` file that the Kodi PVR Addon [IPTV Simple](https://github.com/kodi-pvr/pvr.iptvsimple) can use.
+This Service Add-on allows supported IPTV Add-ons to integrates their Live TV and Radio Channels in the Kodi PVR.
+IPTV Manager will periodically poll those Add-ons for Channels and EPG data, and generate a new M3U playlist and
+XMLTV file that the Kodi PVR Addon [IPTV Simple](https://github.com/kodi-pvr/pvr.iptvsimple) can use.
 
-We got inspiration from the [IPTV Merge](https://www.matthuisman.nz/2019/02/iptv-merge-kodi-add-on.html) addon from 
-Matt Huisman, but decided to do things a bit differently. With this integration, the Add-ons don't have to generate an
-`m3u` file or `xmltv` file themselves but can provide us structured JSON data. 
+We got inspiration from the [IPTV Merge](https://www.matthuisman.nz/2019/02/iptv-merge-kodi-add-on.html) addon from
+Matt Huisman, but decided to do things a bit differently. With this integration, the Add-ons do not have to generate
+an M3U file or XMLTV file themselves but can provide us structured JSON data.
 
 > **Note:** IPTV Manager is still under development, and things might still change. The goal is to create an Add-on that
 > can be included in the Kodi Add-on Repository, so we need to find a way that works best.
@@ -22,11 +22,11 @@ and poll it for channels and EPG data.
 
 The following settings needs to be added. We can pick these up so we know how to communicate with the Add-on.
 
-| Setting             | Required | Description                | Example                                                  |
-|---------------------|----------|----------------------------|----------------------------------------------------------|
-| `iptv.enabled`      | Yes      | Opt-in on polling.         | `true`                                                   |
-| `iptv.channels_uri` | Yes      | Endpoint for Channel data. | `plugin://plugin.video.example/iptv/channels?port=$PORT` |
-| `iptv.epg_uri`      | No       | Endpoint for EPG data.     | `plugin://plugin.video.example/iptv/epg?port=$PORT`      |
+| Setting             | Required | Description                | Example                                       |
+|---------------------|----------|----------------------------|-----------------------------------------------|
+| `iptv.enabled`      | Yes      | Opt-in on polling.         | `true`                                        |
+| `iptv.channels_uri` | Yes      | Endpoint for Channel data. | `plugin://plugin.video.example/iptv/channels` |
+| `iptv.epg_uri`      | No       | Endpoint for EPG data.     | `plugin://plugin.video.example/iptv/epg`      |
 
 There are two possible method to provide the data for channels and EPG in `iptv.channels_uri` and `iptv.epg_uri`:
 * A `plugin://` endpoint
@@ -36,35 +36,35 @@ There are two possible method to provide the data for channels and EPG in `iptv.
 
   > **Current implementation:**
   >
-  > Due to limitations of Kodi, an Add-on can't just return data on an `RunPlugin()` or `RunScript()` call, 
+  > Due to limitations of Kodi, an Add-on cannot just return data on an `RunPlugin()` or `RunScript()` call,
   > so it needs another way to send the data back to IPTV Manager. Therefore, IPTV Manager temporary binds to free port
-  > on `localhost`, and passes this port as the placeholder `$PORT` to the configured endpoint.
-  > 
-  > IPTV Manager will wait for a while for the Add-on to call us back on the socket. If we don't get a connection back,
-  > we will consider the request to have failed and this indicates that something went wrong in the Add-on. 
+  > on `localhost`, and passes this port to the configured endpoint.
   >
-  > Since querying for EPG data could take a while, it's recommended for an Add-on to open the callback connection as soon
-  > as possible, so IPTV Manager doesn't timeout. Once the connection is opened, the Add-on can generate the EPG data and
+  > IPTV Manager will wait for a while for the Add-on to call us back on the socket. If we do not get a connection back,
+  > we will consider the request to have failed and this indicates that something went wrong in the Add-on.
+  >
+  > Since querying for EPG data could take a while, it is recommended for an Add-on to open the callback connection as soon
+  > as possible, so IPTV Manager does not timeout. Once the connection is opened, the Add-on can generate the EPG data and
   > reply in a format documented below by sending the data trough the socket connection.
   >
-  > When an exception occurs, the Add-on doesn't send any data and simply closes the socket again. IPTV Manager will see
-  > this and knows that something went wrong and can continue with its work. 
+  > When an exception occurs, the Add-on does not send any data and simply closes the socket again. IPTV Manager will see
+  > this and knows that something went wrong and can continue with its work.
   >
-  > Example: 
-  > 
-  > * The endpoint `plugin://plugin.video.example/iptv/epg?port=$PORT` will be called as 
+  > Example:
+  >
+  > * The endpoint `plugin://plugin.video.example/iptv/epg` will be called as
   > `plugin://plugin.video.example/iptv/epg?port=38464`
   > * The Add-on `plugin.video.example` does the routing for this call, and opens a socket connection to `localhost:38464`
   >   as soon as possible.
-  > * It will then query it's backend for EPG data for a few days. This might take a few seconds or more.
+  > * It will then query its backend for EPG data for a few days. This might take a few seconds or more.
   > * It generates the json required and sends it trough the socket connection.
   > * It closes the socket connection.
   >
   > Example code can be found at the bottom of this file.
-  
+
 * A web endpoint
 
-  You can also point to an online URL that contains the data. 
+  You can also point to an online URL that contains the data.
 
 ### Channel data
 IPTV Manager will periodically use the `iptv.channels_uri` endpoint to know about the channels that the addon provides.
@@ -72,10 +72,11 @@ IPTV Manager will periodically use the `iptv.channels_uri` endpoint to know abou
 Two formats are supported, and they are auto-detected.
 
 #### M3U
-This is a normal `m3u` playlist as documented by IPTV Simple [here](https://github.com/kodi-pvr/pvr.iptvsimple/blob/Matrix/README.md#m3u-format-elements).
+This is a normal M3U playlist as documented by IPTV Simple [here](https://github.com/kodi-pvr/pvr.iptvsimple/blob/Matrix/README.md#m3u-format-elements).
 
-#### JSON
-This is a `json` format to more easily define your channels without having to create a `m3u` playlist.
+#### JSON-M3U
+This is a JSON format to more easily define your channels without having to create a M3U playlist.
+It is documented at: https://github.com/add-ons/service.iptv.manager/wiki/JSON-M3U-format
 
 ```json
 {
@@ -113,22 +114,23 @@ This is a `json` format to more easily define your channels without having to cr
 | `name`     | Yes      | The name of the channel.                                                                      |
 | `stream`   | Yes      | The endpoint for the Live stream. This can be an online HLS stream or a `plugin://` endpoint. |
 | `preset`   | No       | A preferred channel number.                                                                   |
-| `group`    | No       | A group for the channel. This is probably the network or Add-on name.                         |
-| `logo`     | No       | A logo for the channel. This can be an URL or a local file relative to the Add-on root.       |
-| `radio`    | No       | Indicates if this channel is a Radio channel. (default `false`)                               |
+| `group`    | No       | A group for the channel (usually the network or add-on name). *This defaults to Add-on name.* |
+| `logo`     | No       | A logo for the channel (a URL or local file). *This defaults to the Add-on icon.*             |
+| `radio`    | No       | Indicates if this channel is a Radio channel. *This defaults to `false`.*                     |
 
 ### EPG data
-IPTV Manager will periodically use the `iptv.epg_uri` endpoint to update the EPG of the channels. 
-The key must match the `id` of the channel from the Channel JSON. 
+IPTV Manager will periodically use the `iptv.epg_uri` endpoint to update the EPG of the channels.
+The key must match the `id` of the channel from the Channel JSON.
 
 > In case the constructing of this file takes a long time, it might be beneficial to create this in a background service
-> and cache the results. This cached result can then be passed when IPTV Manager asks for an update. 
+> and cache the results. This cached result can then be passed when IPTV Manager asks for an update.
 
 #### XMLTV
-This is a normal `xmltv` file as documented by IPTV Simple [here](https://github.com/kodi-pvr/pvr.iptvsimple/blob/Matrix/README.md#xmltv-format-elemnents).
+This is a normal XMLTV file as documented by IPTV Simple [here](https://github.com/kodi-pvr/pvr.iptvsimple/blob/Matrix/README.md#xmltv-format-elemnents).
 
-#### JSON
-This is a `json` format to more easily define your channels without having to create a `xmltv` file.
+#### JSONTV
+This is a JSON format to more easily define your channels without having to create an XMLTV file.
+It is documented at: https://github.com/add-ons/service.iptv.manager/wiki/JSONTV-format
 
 ```json
 {
@@ -171,61 +173,79 @@ This is a `json` format to more easily define your channels without having to cr
 
 
 ## Example code
-
-### Reply decorator
-
-The following decorator can be used to send a dict back to IPTV Manager.
+An add-on wanting to implement IPTV Manager support can use the below example to extend.
 
 ```python
-import socket
+# -*- coding: utf-8 -*-
+""" Kodi PVR Integration module """
+
+from __future__ import absolute_import, division, unicode_literals
+
 import json
+import socket
 
-# ...
+from resources.lib.data import CHANNELS
 
-@staticmethod
-def reply(host, port):
-    """ Send the output of the wrapped function to socket. """
 
-    def decorator(func):
-        """ Decorator """
+class IPTVManager:
+    """Interface to IPTV Manager"""
 
-        def inner(*arg, **kwargs):
-            """ Execute function """
-            # Open connection so the remote end knows we are doing something
+    def __init__(self, port):
+        """Initialize IPTV Manager object"""
+        self.port = port
+
+    def via_socket(func):
+        """Send the output of the wrapped function to socket"""
+
+        def send(self):
+            """Decorator to send over a socket"""
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((host, port))
-
+            sock.connect(('127.0.0.1', self.port))
             try:
-                # Execute function
-                result = func(*arg, **kwargs)
-
-                # Send result
-                sock.send(json.dumps(result))
+                sock.send(json.dumps(func(self)))
             finally:
-                # Close our connection
                 sock.close()
 
-        return inner
+        return send
 
-    return decorator
+    @via_socket
+    def send_channels():
+        """Return JSON-M3U formatted information to IPTV Manager"""
+        channels = []
+        for entry in CHANNELS:
+            channels.append(dict(
+                id=foo.get('id'),
+                name=foo.get('label'),
+                logo=foo.get('logo'),
+                stream=foo.get('url'),
+            ))
+        return dict(version=1, streams=channels)
+
+    @via_socket
+    def send_epg():
+        """Return JSONTV formatted information to IPTV Manager"""
+        from tvguide import TVGuide
+        epg_data = TVGuide().get_epg_data()
+        return dict(version=1, epg=epg_data)
 ```
 
 It can be used like this:
 ```python
-routing = routing.Plugin()  # pylint: disable=invalid-name
+import routing
+routing = routing.Plugin()
 
-# ...
-
-@routing.route('/iptv/channels')
+@plugin.route('/iptv/channels')
 def iptv_channels():
-    """ Generate channel data for the Kodi PVR integration """
-    from resources.lib.modules.iptvmanager import IptvManager
+    """Return JSON-M3U formatted data for all live channels"""
+    from iptvmanager import IPTVManager
+    port = int(plugin.args.get('port')[0])
+    IPTVManager(port).send_channels()
 
-    @IptvManager.reply('127.0.0.1', int(routing.args['port'][0]))
-    def generate():
-        """ Channel generator """
-        return IptvManager(kodi).get_channels()
 
-    generate()
-
+@plugin.route('/iptv/epg')
+def iptv_epg():
+    """Return JSONTV formatted data for all live channel EPG data"""
+    from iptvmanager import IPTVManager
+    port = int(plugin.args.get('port')[0])
+    IPTVManager(port).send_epg()
 ```

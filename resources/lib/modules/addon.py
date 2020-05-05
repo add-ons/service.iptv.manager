@@ -18,6 +18,20 @@ CHANNELS_VERSION = 1
 EPG_VERSION = 1
 
 
+def update_qs(url, **params):
+    ''' Add or update a URL query string '''
+    try:  # Python 3
+        from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+    except ImportError:  # Python 2
+        from urllib import urlencode
+        from urlparse import parse_qsl, urlparse, urlunparse
+    url_parts = list(urlparse(url))
+    query = dict(parse_qsl(url_parts[4]))
+    query.update(params)
+    url_parts[4] = urlencode(query)
+    return urlunparse(url_parts)
+
+
 class Addon:
     """ Helper class for Addon communication """
 
@@ -121,7 +135,7 @@ class Addon:
         if uri.startswith('plugin://'):
             # Prepare data
             sock = self._prepare_for_data()
-            uri = uri.replace('$PORT', str(sock.getsockname()[1]))
+            uri = update_qs(uri, port=sock.getsockname()[1])
 
             _LOGGER.info('Executing RunPlugin(%s)...', uri)
             kodiutils.execute_builtin('RunPlugin', uri)
@@ -194,7 +208,7 @@ class Addon:
             return buf
 
         except socket.timeout:
-            raise Exception('Timout waiting for reply from %s on port %s' % (self.addon_id, sock.getsockname()[1]))
+            raise Exception('Timout waiting for reply on port %s' % sock.getsockname()[1])
 
         finally:
             # Close our socket
