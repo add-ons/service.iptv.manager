@@ -37,9 +37,9 @@ def from_unicode(text, encoding='utf-8', errors='strict'):
     return text
 
 
-def addon_icon():
+def addon_icon(addon=None):
     """Cache and return add-on icon"""
-    return get_addon_info('icon')
+    return get_addon_info('icon', addon)
 
 
 def addon_id(addon=None):
