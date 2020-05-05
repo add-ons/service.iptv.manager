@@ -81,8 +81,7 @@ class Addon:
                 if not channel.get('logo').startswith(('http://', 'https://', 'special://', '/')):
                     channel['logo'] = os.path.join(self.addon_path, channel.get('logo'))
             else:
-                # TODO: use the logo of the addon
-                pass
+                channel['logo'] = kodiutils.addon_icon(self.addon_obj)
 
             # Add add-on name as group
             if not channel.get('group'):
@@ -118,9 +117,8 @@ class Addon:
 
     def _get_data_from_addon(self, uri):
         """ Request data from the specified URI """
+        # Plugin path
         if uri.startswith('plugin://'):
-            # Plugin path
-
             # Prepare data
             sock = self._prepare_for_data()
             uri = uri.replace('$PORT', str(sock.getsockname()[1]))
@@ -136,8 +134,8 @@ class Addon:
 
             return data
 
+        # HTTP(S) path
         if uri.startswith(('http://', 'https://')):
-            # HTTP(S) path
             # TODO: implement requests to fetch data
             return None
 
@@ -169,8 +167,7 @@ class Addon:
         sock.listen(1)
         return sock
 
-    @staticmethod
-    def _wait_for_data(sock, timeout=10):
+    def _wait_for_data(self, sock, timeout=10):
         """ Wait for data to arrive on the socket """
         # Set a connection timeout
         # The remote and should connect back as soon as possible so we know that the request is being processed
@@ -178,28 +175,28 @@ class Addon:
 
         # Accept one client
         try:
-            _LOGGER.debug('Waiting for a connection on port %s...', sock.getsockname()[1])
+            _LOGGER.debug('Waiting for a connection from %s on port %s...', self.addon_id, sock.getsockname()[1])
             conn, addr = sock.accept()
             _LOGGER.debug('Connected to %s:%s! Waiting for result...', addr[0], addr[1])
 
             # Read until the remote end closes the connection
-            buffer = ''
+            buf = ''
             while True:
                 chunk = conn.recv(1024)
                 if not chunk:
                     break
-                buffer += chunk
+                buf += chunk
 
-            if not buffer:
+            if not buf:
                 # We got an empty reply, this means that something didn't go according to plan
-                raise Exception('Something went wrong in the other Add-on')
+                raise Exception('Something went wrong in %s' % self.addon_id)
 
-            return buffer
+            return buf
 
         except socket.timeout:
-            raise Exception('Timout waiting on reply from other Add-on')
+            raise Exception('Timout waiting for reply from %s on port %s' % (self.addon_id, sock.getsockname()[1]))
 
         finally:
             # Close our socket
-            _LOGGER.debug('Closing socket on port %s', sock.getsockname()[1])
+            _LOGGER.debug('Closing socket on port %s',sock.getsockname()[1])
             sock.close()
