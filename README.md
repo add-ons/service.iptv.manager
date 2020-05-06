@@ -177,14 +177,10 @@ An add-on wanting to implement IPTV Manager support can use the below example to
 
 ```python
 # -*- coding: utf-8 -*-
-""" Kodi PVR Integration module """
-
-from __future__ import absolute_import, division, unicode_literals
+"""IPTV Manager Integration module"""
 
 import json
 import socket
-
-from resources.lib.data import CHANNELS
 
 
 class IPTVManager:
@@ -209,22 +205,23 @@ class IPTVManager:
         return send
 
     @via_socket
-    def send_channels():
+    def send_channels(self):
         """Return JSON-M3U formatted information to IPTV Manager"""
+        from resources.lib.channels import CHANNELS
         channels = []
         for entry in CHANNELS:
             channels.append(dict(
-                id=foo.get('id'),
-                name=foo.get('label'),
-                logo=foo.get('logo'),
-                stream=foo.get('url'),
+                id=entry.get('id'),
+                name=entry.get('label'),
+                logo=entry.get('logo'),
+                stream=entry.get('url'),
             ))
         return dict(version=1, streams=channels)
 
     @via_socket
-    def send_epg():
+    def send_epg(self):
         """Return JSONTV formatted information to IPTV Manager"""
-        from tvguide import TVGuide
+        from resources.lib.tvguide import TVGuide
         epg_data = TVGuide().get_epg_data()
         return dict(version=1, epg=epg_data)
 ```
@@ -232,12 +229,12 @@ class IPTVManager:
 It can be used like this:
 ```python
 import routing
-routing = routing.Plugin()
+plugin = routing.Plugin()
 
 @plugin.route('/iptv/channels')
 def iptv_channels():
     """Return JSON-M3U formatted data for all live channels"""
-    from iptvmanager import IPTVManager
+    from resources.lib.iptvmanager import IPTVManager
     port = int(plugin.args.get('port')[0])
     IPTVManager(port).send_channels()
 
@@ -245,7 +242,7 @@ def iptv_channels():
 @plugin.route('/iptv/epg')
 def iptv_epg():
     """Return JSONTV formatted data for all live channel EPG data"""
-    from iptvmanager import IPTVManager
+    from resources.lib.iptvmanager import IPTVManager
     port = int(plugin.args.get('port')[0])
     IPTVManager(port).send_epg()
 ```
