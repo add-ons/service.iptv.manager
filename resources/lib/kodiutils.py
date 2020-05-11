@@ -243,7 +243,7 @@ def set_setting_bool(key, value):
 def set_setting_int(key, value):
     """Set an add-on setting as integer"""
     try:
-        return ADDON.setSettingInt(key, value)
+        return ADDON.setSettingInt(key, int(value))
     except (AttributeError, TypeError):  # On Krypton or older, or when not an integer
         return set_setting(key, value)
 
