@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 import logging
 
 from resources.lib import kodilogging, kodiutils
+from resources.lib.modules.addon import Addon
 from resources.lib.modules.iptvsimple import IptvSimple
 
 kodilogging.config()
@@ -21,10 +22,16 @@ def setup_iptv_simple():
         else:
             kodiutils.ok_dialog(message=kodiutils.localize(30702))  # The configuration of IPTV Simple has failed!
 
+    # Open settings again
+    kodiutils.open_settings()
+
 
 def refresh():
     """ Refresh the channels and EPG """
-    _LOGGER.debug('TODO: refresh')
+    Addon.refresh(True)
+
+    # Open settings again
+    kodiutils.open_settings()
 
 
 def run(args):

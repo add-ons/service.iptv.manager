@@ -7,8 +7,10 @@ import json
 import logging
 import os
 import socket
+import time
 
 from resources.lib import kodiutils
+from resources.lib.modules.iptvsimple import IptvSimple
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -43,6 +45,55 @@ class Addon:
 
         addon = kodiutils.get_addon(addon_id)
         self.addon_path = kodiutils.addon_path(addon)
+
+    @classmethod
+    def refresh(cls, show_progress=False):
+        """ Update channels and EPG data """
+        channels = []
+        epg = dict()
+
+        if show_progress:
+            progress = kodiutils.progress(message=kodiutils.localize(30703))  # Detecting IPTV add-ons...
+        else:
+            progress = None
+
+        addons = cls.get_iptv_addons()
+
+        for index, addon in enumerate(addons):
+            _LOGGER.info('Updating IPTV data for %s...', addon.addon_id)
+
+            if progress:
+                progress.update(int(100 * index / len(addons)),
+                                kodiutils.localize(30704).format(addon=kodiutils.addon_name(addon.addon_obj)))  # Fetching channels and guide of {addon}...
+
+            # Fetch channels
+            channels.extend(addon.get_channels())
+            if progress and progress.iscanceled():
+                progress.close()
+                return
+
+            # Fetch EPG data
+            epg.update(addon.get_epg())
+            if progress and progress.iscanceled():
+                progress.close()
+                return
+
+        # Write files
+        if show_progress:
+            progress.update(100, kodiutils.localize(30705))  # Updating channels and guide...
+
+        IptvSimple.write_playlist(channels)
+        IptvSimple.write_epg(epg)
+
+        if kodiutils.get_setting_bool('iptv_simple_refresh'):
+            IptvSimple.restart()
+
+        # Update last_updated
+        kodiutils.set_setting_int('last_updated', time.time())
+
+        if show_progress:
+            progress.close()
+            kodiutils.ok_dialog(message=kodiutils.localize(30706))  # The channels and guide are updated succesfully!
 
     @staticmethod
     def get_iptv_addons():

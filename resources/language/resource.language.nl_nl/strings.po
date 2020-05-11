@@ -12,27 +12,91 @@ msgid "Are you sure you want to setup IPTV Simple for the use with IPTV Manager?
 msgstr "Bent u zeker om IPTV Simple in te stellen om te gebruiken met IPTV Manager? De bestaande configuratie van IPTV Simple zal worden overschreven."
 
 msgctxt "#30701"
-msgid "The configuration of IPTV Simple is completed!"
-msgstr "De configuratie van IPTV Simple is uitgevoerd!"
+msgid "IPTV Simple is configured for use with IPTV Manager!"
+msgstr "IPTV SImple is geconfigureerd om te gebruiken met IPTV Manager!"
 
 msgctxt "#30702"
 msgid "The configuration of IPTV Simple has failed. Please check the log files for more information."
 msgstr "De configuratie van IPTV Simple is mislukt. Gelieve de logbestanden te bekijken voor meer informatie."
 
+msgctxt "#30703"
+msgid "Detecting IPTV add-ons..."
+msgstr "Detecteren van IPTV add-ons..."
+
+msgctxt "#30704"
+msgid "Fetching channels and guide of {addon}..."
+msgstr "Opvragen van kanalenlijst en gids van {addon}..."
+
+msgctxt "#30705"
+msgid "Updating channels and guide..."
+msgstr "Updaten van de kanalenlijst en de gids..."
+
+msgctxt "#30706"
+msgid "The channels and guide are updated succesfully!"
+msgstr "De kanalenlijst en gids zijn sucessvol geüpdate."
+
+
 ### SETTINGS
 msgctxt "#30800"
+msgid "Channels"
+msgstr "Kanalen"
+
+msgctxt "#30801"
+msgid "Refreshing"
+msgstr "Verniewen"
+
+msgctxt "#30802"
+msgid "Refresh interval"
+msgstr "Vernieuwsingsinterval"
+
+msgctxt "#30803"
+msgid "Refresh channels and guide now…"
+msgstr "Vernieuw kanalenlijst en gids nu…"
+
+msgctxt "#30820"
 msgid "IPTV Simple"
 msgstr "IPTV Simple"
 
-msgctxt "#30801"
+msgctxt "#30821"
 msgid "Configuration"
 msgstr "Configuratie"
 
-msgctxt "#30802"
+msgctxt "#30822"
 msgid "Configure IPTV Simple automatically…"
 msgstr "Configureer IPTV Simple automatisch…"
 
-msgctxt "#30803"
+msgctxt "#30823"
 msgid "Open IPTV Simple settings…"
 msgstr "Open de IPTV Simple instellingen…"
 
+msgctxt "#30824"
+msgid "Automatically restart IPTV Simple to refresh the data"
+msgstr "Herstart IPTV Simple automatisch om de data te vernieuwen"
+
+msgctxt "#30901"
+msgid "Every hour"
+msgstr "Elk uur"
+
+msgctxt "#30902"
+msgid "Every 2 hours"
+msgstr "Elke 2 uur"
+
+msgctxt "#30903"
+msgid "Every 3 hours"
+msgstr "Elke 3 uur"
+
+msgctxt "#30904"
+msgid "Every 4 hours"
+msgstr "Elke 4 uur"
+
+msgctxt "#30906"
+msgid "Every 6 hours"
+msgstr "Elke 6 uur"
+
+msgctxt "#30912"
+msgid "Every 12 hours"
+msgstr "Elke 12 uur"
+
+msgctxt "#30924"
+msgid "Every day"
+msgstr "Elke dag"

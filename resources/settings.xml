@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-    <category label="30800"> <!-- IPTV Simple -->
-        <setting label="30801" type="lsep"/> <!-- Configuration -->
-        <setting label="30802" type="action" action="RunScript(service.iptv.manager,setup-iptv-simple)"/> <!-- Configure IPTV Simple automatically... -->
-        <setting label="30803" type="action" option="close" action="Addon.OpenSettings(pvr.iptvsimple)" enable="System.HasAddon(pvr.iptvsimple)"/>
+    <setting id="last_updated" visible="false"/>
+    <category label="30800"> <!-- Sources -->
+        <setting label="30801" type="lsep"/> <!-- Refreshing -->
+        <setting label="30802" type="enum" id="refresh_interval" default="6" lvalues="30901|30902|30903|30904|30906|30912|30924" /> <!-- Every x hour -->
+        <setting label="30803" type="action" option="close" action="RunScript(service.iptv.manager,refresh)"/> <!-- Force refresh now -->
+    </category>
+    <category label="30820"> <!-- IPTV Simple -->
+        <setting label="30821" type="lsep"/> <!-- Configuration -->
+        <setting label="30822" type="action" option="close" action="RunScript(service.iptv.manager,setup-iptv-simple)"/> <!-- Configure IPTV Simple automatically -->
+        <setting label="30823" type="action" option="close" action="Addon.OpenSettings(pvr.iptvsimple)" enable="System.HasAddon(pvr.iptvsimple)"/> <!-- Open IPTV Simple settings -->
+        <setting label="30824" type="bool" id="iptv_simple_refresh" default="true" enable="System.HasAddon(pvr.iptvsimple)"/> <!-- Automatically restart IPTV Simple -->
     </category>
 </settings>

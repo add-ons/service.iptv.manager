@@ -4,12 +4,12 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import logging
+import time
 
 from xbmc import Monitor
 
-from resources.lib import kodilogging
+from resources.lib import kodilogging, kodiutils, UPDATE_INTERVALS
 from resources.lib.modules.addon import Addon
-from resources.lib.modules.iptvsimple import IptvSimple
 
 kodilogging.config()
 _LOGGER = logging.getLogger(__name__)
@@ -25,38 +25,27 @@ class BackgroundService(Monitor):
         """ Background loop for maintenance tasks """
         _LOGGER.debug('Service started')
 
-        # Do an initial update
-        # TODO: we have to schedule this somehow
-        self.update()
+        # Do an initial update at startup
+        Addon.refresh()
 
+        # Service loop
         while not self.abortRequested():
+            # Check if we need to do an update
+            if self._is_update_required():
+                Addon.refresh()
+
             # Stop when abort requested
-            if self.waitForAbort(10):
+            if self.waitForAbort(60):
                 break
 
         _LOGGER.debug('Service stopped')
 
     @staticmethod
-    def update():
-        """ Update the channels and epg data """
-        channels = []
-        epg = dict()
-
-        addons = Addon.get_iptv_addons()
-        for addon in addons:
-            _LOGGER.info('Updating IPTV data for %s...', addon.addon_id)
-
-            # Fetch channels
-            channels.extend(addon.get_channels())
-
-            # Fetch EPG data
-            epg.update(addon.get_epg())
-
-        # Write files
-        IptvSimple.write_playlist(channels)
-        IptvSimple.write_epg(epg)
-
-        IptvSimple.restart()
+    def _is_update_required():
+        """ Returns if we should trigger an update based on the settings. """
+        refresh_interval = UPDATE_INTERVALS.get(kodiutils.get_setting_int('refresh_interval'))
+        last_updated = kodiutils.get_setting_int('last_updated', 0)
+        return (last_updated + refresh_interval) <= time.time()
 
 
 def run():

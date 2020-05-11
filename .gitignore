@@ -1,17 +1,24 @@
+# Temporary files
 *.pyc
 *.pyo
 .DS*
+Thumbs.db
+*~
+.cache
+
+# Files related to development
 .pylint_rc
 /.idea
 /.project
 /.pydevproject
 /.settings
-Thumbs.db
-*~
-.cache
+/Pipfile
+/Pipfile.lock
 
+# Files related to testing
 .coverage
 .tox/
 
+# IPTV Manager output
 tests/userdata/playlist.m3u8
 tests/userdata/epg.xml

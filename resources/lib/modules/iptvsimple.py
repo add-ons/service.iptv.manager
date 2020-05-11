@@ -60,6 +60,7 @@ class IptvSimple:
     @classmethod
     def restart(cls):
         """ Restart IPTV Simple """
+        # This should be fixed in IPTV Simple. Automatic refresh is already implemented for Matrix, but not for Leia.
         cls._deactivate()
         time.sleep(1)
         cls._activate()
