@@ -1,3 +1,9 @@
+[![GitHub release](https://img.shields.io/github/release/add-ons/service.iptv.manager.svg?include_prereleases)](https://github.com/add-ons/service.iptv.manager/releases)
+[![Build Status](https://img.shields.io/github/workflow/status/add-ons/service.iptv.manager/CI/master)](https://github.com/add-ons/service.iptv.manager/actions?query=branch%3Amaster)
+[![Codecov status](https://img.shields.io/codecov/c/github/add-ons/service.iptv.manager/master)](https://codecov.io/gh/add-ons/service.iptv.manager/branch/master)
+[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-yellow.svg)](https://opensource.org/licenses/GPL-3.0)
+[![Contributors](https://img.shields.io/github/contributors/add-ons/service.iptv.manager.svg)](https://github.com/add-ons/service.iptv.manager/graphs/contributors)
+
 # IPTV Manager
 This Service Add-on allows supported IPTV Add-ons to integrates their Live TV and Radio Channels in the Kodi PVR.
 IPTV Manager will periodically poll those Add-ons for Channels and EPG data, and generate a new M3U playlist and
