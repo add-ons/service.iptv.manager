@@ -3,7 +3,7 @@
     <setting id="last_updated" visible="false"/>
     <category label="30800"> <!-- Sources -->
         <setting label="30801" type="lsep"/> <!-- Refreshing -->
-        <setting label="30802" type="enum" id="refresh_interval" default="6" lvalues="30901|30902|30903|30904|30906|30912|30924" /> <!-- Every x hour -->
+        <setting label="30802" type="select" id="refresh_interval" default="6" values="1|2|3|4|6|12|24" /> <!-- Every x hour -->
         <setting label="30803" type="action" option="close" action="RunScript(service.iptv.manager,refresh)"/> <!-- Force refresh now -->
     </category>
     <category label="30820"> <!-- IPTV Simple -->

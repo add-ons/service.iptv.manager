@@ -8,7 +8,7 @@ import time
 
 from xbmc import Monitor
 
-from resources.lib import kodilogging, kodiutils, UPDATE_INTERVALS
+from resources.lib import kodilogging, kodiutils
 from resources.lib.modules.addon import Addon
 
 kodilogging.config()
@@ -43,8 +43,9 @@ class BackgroundService(Monitor):
     @staticmethod
     def _is_update_required():
         """ Returns if we should trigger an update based on the settings. """
-        refresh_interval = UPDATE_INTERVALS.get(kodiutils.get_setting_int('refresh_interval'))
+        refresh_interval = kodiutils.get_setting_int('refresh_interval') * 60 * 60
         last_updated = kodiutils.get_setting_int('last_updated', 0)
+        _LOGGER.debug('last_updated = %d, time = %d, refresh_interval = %d', last_updated, time.time(), refresh_interval)
         return (last_updated + refresh_interval) <= time.time()
 
 

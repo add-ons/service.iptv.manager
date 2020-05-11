@@ -46,8 +46,8 @@ msgid "Refreshing"
 msgstr "Verniewen"
 
 msgctxt "#30802"
-msgid "Refresh interval"
-msgstr "Vernieuwsingsinterval"
+msgid "Refresh interval [I](in hours)[/I]"
+msgstr "Vernieuwsingsinterval [I](in uren)[/I]"
 
 msgctxt "#30803"
 msgid "Refresh channels and guide now…"
@@ -72,31 +72,3 @@ msgstr "Open de IPTV Simple instellingen…"
 msgctxt "#30824"
 msgid "Automatically restart IPTV Simple to refresh the data"
 msgstr "Herstart IPTV Simple automatisch om de data te vernieuwen"
-
-msgctxt "#30901"
-msgid "Every hour"
-msgstr "Elk uur"
-
-msgctxt "#30902"
-msgid "Every 2 hours"
-msgstr "Elke 2 uur"
-
-msgctxt "#30903"
-msgid "Every 3 hours"
-msgstr "Elke 3 uur"
-
-msgctxt "#30904"
-msgid "Every 4 hours"
-msgstr "Elke 4 uur"
-
-msgctxt "#30906"
-msgid "Every 6 hours"
-msgstr "Elke 6 uur"
-
-msgctxt "#30912"
-msgid "Every 12 hours"
-msgstr "Elke 12 uur"
-
-msgctxt "#30924"
-msgid "Every day"
-msgstr "Elke dag"
