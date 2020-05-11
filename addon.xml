@@ -11,11 +11,10 @@
         <description lang="en_GB">This add-on integrates IPTV Channels from other Add-ons in the Kodi PVR.</description>
         <platform>all</platform>
         <license>GPL-3.0</license>
-        <news></news>
+        <news>First release!</news>
         <source>https://github.com/add-ons/service.iptv.manager</source>
         <assets>
             <icon>resources/icon.png</icon>
-            <fanart>resources/fanart.png</fanart>
         </assets>
         <reuselanguageinvoker>true</reuselanguageinvoker>
     </extension>

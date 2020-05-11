@@ -212,5 +212,5 @@ class Addon:
 
         finally:
             # Close our socket
-            _LOGGER.debug('Closing socket on port %s',sock.getsockname()[1])
+            _LOGGER.debug('Closing socket on port %s', sock.getsockname()[1])
             sock.close()
