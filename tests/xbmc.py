@@ -181,6 +181,8 @@ def executeJSONRPC(jsonrpccommand):
         return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(textures=[dict(cachedurl="", imagehash="", lasthashcheck="", textureid=4837, url="")])))
     if command.get('method') == 'Textures.RemoveTexture':
         return json.dumps(dict(id=1, jsonrpc='2.0', result="OK"))
+    if command.get('method') == 'Addons.GetAddons':
+        return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(addons=[])))
     log("executeJSONRPC does not implement method '{method}'".format(**command), 'Error')
     return json.dumps(dict(error=dict(code=-1, message='Not implemented'), id=1, jsonrpc='2.0'))
 

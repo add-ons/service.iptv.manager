@@ -12,3 +12,6 @@ Thumbs.db
 
 .coverage
 .tox/
+
+tests/userdata/playlist.m3u8
+tests/userdata/epg.xml
