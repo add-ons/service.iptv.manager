@@ -15,7 +15,6 @@
         <source>https://github.com/add-ons/service.iptv.manager</source>
         <assets>
             <icon>resources/icon.png</icon>
-            <fanart>resources/fanart.png</fanart>
         </assets>
         <reuselanguageinvoker>true</reuselanguageinvoker>
     </extension>
