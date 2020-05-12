@@ -41,8 +41,8 @@ def uri_to_path(uri):
 def read_addon_xml(path):
     """Parse the addon.xml and return an info dictionary"""
     info = dict(
-        path='./',  # '/storage/.kodi/addons/plugin.video.vrt.nu',
-        profile='special://userdata',  # 'special://profile/addon_data/plugin.video.vrt.nu/',
+        path='./',
+        profile='special://userdata',
         type='xbmc.python.pluginsource',
     )
 
@@ -53,19 +53,23 @@ def read_addon_xml(path):
     info['author'] = info.pop('provider-name')
 
     for child in root:
-        if child.attrib.get('point') != 'xbmc.addon.metadata':
+        if child.attrib.get('point') == 'xbmc.python.pluginsource':
+            info['pluginsource'] = child.attrib.get('library')
             continue
-        for grandchild in child:
-            # Handle assets differently
-            if grandchild.tag == 'assets':
-                for asset in grandchild:
-                    info[asset.tag] = asset.text
-                continue
-            # Not in English ?  Drop it
-            if grandchild.attrib.get('lang', 'en_GB') != 'en_GB':
-                continue
-            # Add metadata
-            info[grandchild.tag] = grandchild.text
+
+        if child.attrib.get('point') == 'xbmc.addon.metadata':
+            for grandchild in child:
+                # Handle assets differently
+                if grandchild.tag == 'assets':
+                    for asset in grandchild:
+                        info[asset.tag] = asset.text
+                    continue
+                # Not in English ?  Drop it
+                if grandchild.attrib.get('lang', 'en_GB') != 'en_GB':
+                    continue
+                # Add metadata
+                info[grandchild.tag] = grandchild.text
+            continue
 
     return {info['name']: info}
 
@@ -109,19 +113,6 @@ def addon_settings(addon_id=None):
     except OSError as e:
         print("Error: Cannot use 'tests/userdata/addon_settings.json' : %s" % e)
         settings = {}
-
-    # Read credentials from environment or credentials.json
-    if 'ADDON_USERNAME' in os.environ and 'ADDON_PASSWORD' in os.environ:
-        # print('Using credentials from the environment variables ADDON_USERNAME and ADDON_PASSWORD')
-        settings[ADDON_ID]['username'] = os.environ.get('ADDON_USERNAME')
-        settings[ADDON_ID]['password'] = os.environ.get('ADDON_PASSWORD')
-    elif os.path.exists('tests/userdata/credentials.json'):
-        # print('Using credentials from tests/userdata/credentials.json')
-        with open('tests/userdata/credentials.json') as f:
-            credentials = json.load(f)
-        settings[ADDON_ID].update(credentials)
-    else:
-        print("Error: Cannot use 'tests/userdata/credentials.json'")
 
     if addon_id:
         return settings[addon_id]

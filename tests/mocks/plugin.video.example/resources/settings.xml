@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <setting id="iptv.enabled" default="true" visible="false"/>
+    <setting id="iptv.channels_uri" default="plugin://plugin.video.example/iptv/channels" visible="false"/>
+    <setting id="iptv.epg_uri" default="plugin://plugin.video.example/iptv/epg" visible="false"/>
+</settings>

@@ -1,4 +1,9 @@
 {
   "service.iptv.manager": {
+  },
+  "plugin.video.example": {
+    "iptv.enabled": "true",
+    "iptv.channels_uri": "plugin://plugin.video.example/iptv/channels",
+    "iptv.epg_uri": "plugin://plugin.video.example/iptv/epg"
   }
 }

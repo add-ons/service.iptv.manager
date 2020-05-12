@@ -11,7 +11,7 @@ import json
 import os
 import time
 
-from xbmcextra import global_settings, import_language
+from xbmcextra import global_settings, import_language, read_addon_xml
 
 LOGDEBUG = 0
 LOGERROR = 4
@@ -162,9 +162,21 @@ class VideoInfoTag:
         return 0
 
 
-def executebuiltin(string, wait=False):  # pylint: disable=unused-argument
-    """ A stub implementation of the xbmc executebuiltin() function """
-    return
+def executebuiltin(function):
+    """ A reimplementation of the xbmc executebuiltin() function """
+    import re
+    try:
+        command, params = re.search(r'([A-Za-z]+)\(([^\)]+)\)', function).groups()
+        if command == 'RunPlugin':
+            addon, route = re.search(r'plugin://([^/]+)(.*)', params).groups()
+            if addon:
+                import subprocess
+                addon_info = read_addon_xml('tests/mocks/%s/addon.xml' % addon)
+                pluginsource = addon_info.values()[0]['pluginsource']
+                subprocess.call(['python', 'tests/mocks/%s/%s' % (addon, pluginsource), route])
+
+    except AttributeError:
+        pass
 
 
 def executeJSONRPC(jsonrpccommand):
@@ -182,7 +194,8 @@ def executeJSONRPC(jsonrpccommand):
     if command.get('method') == 'Textures.RemoveTexture':
         return json.dumps(dict(id=1, jsonrpc='2.0', result="OK"))
     if command.get('method') == 'Addons.GetAddons':
-        return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(addons=[])))
+        # TODO: generate a list of addons based on the folders in tests/mocks
+        return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(addons=[dict(addonid='plugin.video.example')])))
     log("executeJSONRPC does not implement method '{method}'".format(**command), 'Error')
     return json.dumps(dict(error=dict(code=-1, message='Not implemented'), id=1, jsonrpc='2.0'))
 
