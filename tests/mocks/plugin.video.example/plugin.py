@@ -117,8 +117,8 @@ class IPTVManager:
 
 if __name__ == "__main__":
 
-    if not sys.argv[1]:
-        print('Missing URL as first parameter')
+    if len(sys.argv) <= 1:
+        print('ERROR: Missing URL as first parameter')
         exit(1)
 
     # Parse routing
