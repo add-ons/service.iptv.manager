@@ -85,15 +85,20 @@ class Addon:
         IptvSimple.write_playlist(channels)
         IptvSimple.write_epg(epg)
 
-        if kodiutils.get_setting_bool('iptv_simple_refresh'):
-            IptvSimple.restart()
+        if kodiutils.get_setting_bool('iptv_simple_restart'):
+            if show_progress:
+                # Try to restart now. We will schedule it if the user is watching TV.
+                IptvSimple.restart(True)
+            else:
+                # Schedule a restart
+                IptvSimple.restart(False)
 
-        # Update last_updated
-        kodiutils.set_setting_int('last_updated', time.time())
+        # Update last_refreshed
+        kodiutils.set_setting_int('last_refreshed', int(time.time()))
 
         if show_progress:
             progress.close()
-            kodiutils.ok_dialog(message=kodiutils.localize(30706))  # The channels and guide are updated succesfully!
+            kodiutils.ok_dialog(message=kodiutils.localize(30706))  # The channels and guide are updated successfully!
 
     @staticmethod
     def get_iptv_addons():
@@ -202,7 +207,7 @@ class Addon:
         # HTTP(S) path
         if uri.startswith(('http://', 'https://')):
             # TODO: implement requests to fetch data
-            return None
+            raise NotImplementedError
 
         # Local path
         addon = kodiutils.get_addon(self.addon_id)

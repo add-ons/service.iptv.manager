@@ -32,7 +32,7 @@ msgid "Updating channels and guide..."
 msgstr "Updaten van de kanalenlijst en de gids..."
 
 msgctxt "#30706"
-msgid "The channels and guide are updated succesfully!"
+msgid "The channels and guide are updated successfully!"
 msgstr "De kanalenlijst en gids zijn sucessvol geüpdate."
 
 

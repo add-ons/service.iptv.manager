@@ -10,6 +10,7 @@ from xbmc import Monitor
 
 from resources.lib import kodilogging, kodiutils
 from resources.lib.modules.addon import Addon
+from resources.lib.modules.iptvsimple import IptvSimple
 
 kodilogging.config()
 _LOGGER = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ class BackgroundService(Monitor):
 
     def __init__(self):
         Monitor.__init__(self)
+        self._restart_required = False
 
     def run(self):
         """ Background loop for maintenance tasks """
@@ -31,22 +33,25 @@ class BackgroundService(Monitor):
         # Service loop
         while not self.abortRequested():
             # Check if we need to do an update
-            if self._is_update_required():
+            if self._is_refresh_required():
                 Addon.refresh()
 
+            # Check if IPTV Simple needs to be restarted
+            if IptvSimple.restart_required:
+                IptvSimple.restart()
+
             # Stop when abort requested
-            if self.waitForAbort(60):
+            if self.waitForAbort(30):
                 break
 
         _LOGGER.debug('Service stopped')
 
     @staticmethod
-    def _is_update_required():
+    def _is_refresh_required():
         """ Returns if we should trigger an update based on the settings. """
         refresh_interval = kodiutils.get_setting_int('refresh_interval') * 60 * 60
-        last_updated = kodiutils.get_setting_int('last_updated', 0)
-        _LOGGER.debug('last_updated = %d, time = %d, refresh_interval = %d', last_updated, time.time(), refresh_interval)
-        return (last_updated + refresh_interval) <= time.time()
+        last_refreshed = kodiutils.get_setting_int('last_refreshed', 0)
+        return (last_refreshed + refresh_interval) <= time.time()
 
 
 def run():

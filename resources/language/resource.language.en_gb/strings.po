@@ -31,7 +31,7 @@ msgid "Updating channels and guide..."
 msgstr ""
 
 msgctxt "#30706"
-msgid "The channels and guide are updated succesfully!"
+msgid "The channels and guide are updated successfully!"
 msgstr ""
 
 

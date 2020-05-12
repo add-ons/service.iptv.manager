@@ -21,6 +21,9 @@ IPTV_SIMPLE_EPG = 'epg.xml'
 
 class IptvSimple:
     """ Helper class to setup IPTV Simple """
+
+    restart_required = False
+
     def __init__(self):
         """ Init """
 
@@ -42,6 +45,7 @@ class IptvSimple:
         output_dir = kodiutils.addon_profile()
         playlist_path = os.path.join(output_dir, IPTV_SIMPLE_PLAYLIST)
         epg_path = os.path.join(output_dir, IPTV_SIMPLE_EPG)
+        logo_path = '/'
 
         addon.setSetting('m3uPathType', '0')  # Local path
         addon.setSetting('m3uPath', playlist_path)
@@ -50,7 +54,7 @@ class IptvSimple:
         addon.setSetting('epgPath', epg_path)
 
         addon.setSetting('logoPathType', '0')  # Local path
-        addon.setSetting('logoPath', '/')
+        addon.setSetting('logoPath', logo_path)
 
         # Activate IPTV Simple
         cls._activate()
@@ -58,9 +62,15 @@ class IptvSimple:
         return True
 
     @classmethod
-    def restart(cls):
+    def restart(cls, force=False):
         """ Restart IPTV Simple """
-        # This should be fixed in IPTV Simple. Automatic refresh is already implemented for Matrix, but not for Leia.
+        if not force and (kodiutils.get_cond_visibility('Pvr.IsPlayingTv') or kodiutils.get_cond_visibility('Pvr.IsPlayingRadio')):
+            # Don't restart when we are Playing TV or Radio
+            cls.restart_required = True
+            return
+
+        cls.restart_required = False
+
         cls._deactivate()
         time.sleep(1)
         cls._activate()
