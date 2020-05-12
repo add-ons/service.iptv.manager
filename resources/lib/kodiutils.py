@@ -310,26 +310,6 @@ def get_addon_info(key, addon=None):
     return to_unicode(addon.getAddonInfo(key))
 
 
-def container_refresh(url=None):
-    """Refresh the current container or (re)load a container by URL"""
-    if url:
-        _LOGGER.debug('Execute: Container.Refresh(%s)', url)
-        xbmc.executebuiltin('Container.Refresh({url})'.format(url=url))
-    else:
-        _LOGGER.debug('Execute: Container.Refresh')
-        xbmc.executebuiltin('Container.Refresh')
-
-
-def container_update(url):
-    """Update the current container while respecting the path history."""
-    if url:
-        _LOGGER.debug('Execute: Container.Update(%s)', url)
-        xbmc.executebuiltin('Container.Update({url})'.format(url=url))
-    else:
-        # URL is a mandatory argument for Container.Update, use Container.Refresh instead
-        container_refresh()
-
-
 def jsonrpc(*args, **kwargs):
     """Perform JSONRPC calls"""
     from json import dumps, loads

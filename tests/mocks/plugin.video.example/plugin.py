@@ -35,7 +35,7 @@ class IPTVManager:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect(('127.0.0.1', self.port))
             try:
-                sock.send(json.dumps(func()))
+                sock.send(json.dumps(func()).encode())
             finally:
                 sock.close()
 
@@ -50,12 +50,22 @@ class IPTVManager:
                 name='Channel 1',
                 preset=1,
                 stream='plugin://plugin.video.example/play/1',
+                logo='https://example.com/channel1.png',
             ),
             dict(
                 id='channel2.com',
                 name='Channel 2',
                 preset=2,
                 stream='plugin://plugin.video.example/play/2',
+                logo='https://example.com/channel2.png',
+            ),
+            dict(
+                id='radio1.com',
+                name='Radio 1',
+                preset=901,
+                stream='plugin://plugin.video.example/play/901',
+                logo='https://example.com/radio1.png',
+                radio=True,
             ),
         ]
         return dict(version=1, streams=streams)
@@ -72,7 +82,10 @@ class IPTVManager:
                     stop=(now + datetime.timedelta(seconds=1800)).isoformat(),
                     title='This is a show',
                     description='This is the description of the show',
-                    image=None,
+                    subtitle='Pilot episode',
+                    episode='S01E01',
+                    image='https://example.com/image.png',
+                    date='1987-06-15',
                 ),
                 dict(
                     start=(now + datetime.timedelta(seconds=1800)).isoformat(),

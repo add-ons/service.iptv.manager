@@ -16,20 +16,31 @@ class IntegrationTest(unittest.TestCase):
 
     def test_refresh(self):
         """ Test the refreshing of data """
-        epg_path = 'tests/userdata/epg.xml'
         m3u_path = 'tests/userdata/playlist.m3u8'
+        epg_path = 'tests/userdata/epg.xml'
 
         # Remove existing files
-        for path in [epg_path, m3u_path]:
+        for path in [m3u_path, epg_path]:
             if os.path.exists(path):
                 os.unlink(path)
 
         # Do the refresh
-        Addon.refresh()
+        Addon.refresh(True)
 
         # Check that the files now exist
-        for path in [epg_path, m3u_path]:
+        for path in [m3u_path, epg_path]:
             self.assertTrue(os.path.exists(path), '%s does not exist' % path)
+
+        with open(m3u_path, 'r') as fdesc:
+            data = fdesc.read()
+            self.assertTrue('#EXTM3U' in data)
+            self.assertTrue('channel1.com' in data)
+            self.assertTrue('radio1.com' in data)
+
+        with open(epg_path, 'r') as fdesc:
+            data = fdesc.read()
+            self.assertTrue('channel1.com' in data)
+            self.assertTrue('1987-06-15' in data)
 
 
 if __name__ == '__main__':

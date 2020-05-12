@@ -255,7 +255,7 @@ class Addon:
                 chunk = conn.recv(1024)
                 if not chunk:
                     break
-                buf += chunk
+                buf += chunk.decode()
 
             if not buf:
                 # We got an empty reply, this means that something didn't go according to plan
