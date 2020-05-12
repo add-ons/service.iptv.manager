@@ -1,4 +1,12 @@
 {
   "service.iptv.manager": {
+    "iptv_simple_restart": "true"
+  },
+  "pvr.iptvsimple": {
+  },
+  "plugin.video.example": {
+    "iptv.enabled": "true",
+    "iptv.channels_uri": "plugin://plugin.video.example/iptv/channels",
+    "iptv.epg_uri": "plugin://plugin.video.example/iptv/epg"
   }
 }
