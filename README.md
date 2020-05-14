@@ -43,7 +43,7 @@ Skin: [Arctic: Zephyr 2](https://forum.kodi.tv/showthread.php?tid=339791)
 
 ## Development
 If you want to integrate your own Add-on with IPTV Manager, you can find more information in the 
-[INTEGRATION.md](integration.md) document.
+[INTEGRATION.md](INTEGRATION.md) document.
 
 ## Credits
 * Huge thanks to [IPTV Simple](https://github.com/kodi-pvr/pvr.iptvsimple)
