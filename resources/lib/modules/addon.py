@@ -14,14 +14,12 @@ from resources.lib.modules.iptvsimple import IptvSimple
 
 _LOGGER = logging.getLogger(__name__)
 
-IPTV_FILENAME = 'iptv.json'
-IPTV_VERSION = 1
 CHANNELS_VERSION = 1
 EPG_VERSION = 1
 
 
 def update_qs(url, **params):
-    ''' Add or update a URL query string '''
+    """ Add or update a URL query string """
     try:  # Python 3
         from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
     except ImportError:  # Python 2
@@ -174,7 +172,7 @@ class Addon:
             _LOGGER.error('Something went wrong while calling %s: %s', self.addon_id, exc)
             return {}
 
-        if data.get('version', 1) > CHANNELS_VERSION:
+        if data.get('version', 1) > EPG_VERSION:
             _LOGGER.warning('Skipping EPG from %s since it uses an unsupported version: %d', self.epg_uri, data.get('version'))
             return {}
 
@@ -204,25 +202,8 @@ class Addon:
 
             return data
 
-        # HTTP(S) path
-        if uri.startswith(('http://', 'https://')):
-            # TODO: implement requests to fetch data
-            raise NotImplementedError
-
-        # Local path
-        addon = kodiutils.get_addon(self.addon_id)
-        addon_path = kodiutils.addon_path(addon)
-        filename = os.path.join(addon_path, uri)
-
-        if not os.path.exists(filename):
-            raise Exception('File %s does not exist' % filename)
-
-        # Read file
-        _LOGGER.info('Loading fixed reply from %s', filename)
-        with open(filename) as fdesc:
-            data = json.load(fdesc)
-
-        return data
+        # Currently, only plugin:// uris are supported
+        raise NotImplementedError
 
     @staticmethod
     def _prepare_for_data():
