@@ -169,5 +169,5 @@ class IptvSimple:
         # Move new file to the right place
         if os.path.isfile(epg_path):
             os.remove(epg_path)
-            
+
         os.rename(epg_path + '.tmp', epg_path)
