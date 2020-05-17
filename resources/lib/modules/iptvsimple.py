@@ -116,6 +116,9 @@ class IptvSimple:
             fdesc.write(m3u8_data.encode('utf-8'))
 
         # Move new file to the right place
+        if os.path.isfile(playlist_path):
+            os.remove(playlist_path)
+
         os.rename(playlist_path + '.tmp', playlist_path)
 
     @staticmethod
@@ -164,4 +167,7 @@ class IptvSimple:
             fdesc.write('</tv>\n'.encode('utf-8'))
 
         # Move new file to the right place
+        if os.path.isfile(epg_path):
+            os.remove(epg_path)
+
         os.rename(epg_path + '.tmp', epg_path)
