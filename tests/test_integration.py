@@ -11,6 +11,7 @@ import unittest
 from lxml import etree
 
 from resources.lib.modules.addon import Addon
+from tests.xbmc import to_unicode
 
 
 class IntegrationTest(unittest.TestCase):
@@ -35,7 +36,7 @@ class IntegrationTest(unittest.TestCase):
 
         # Validate playlist
         with open(m3u_path, 'r') as fdesc:
-            data = fdesc.read().decode('utf-8')
+            data = to_unicode(fdesc.read())
             self.assertTrue('#EXTM3U' in data)
             self.assertTrue('channel1.com' in data)
             self.assertTrue('radio1.com' in data)
