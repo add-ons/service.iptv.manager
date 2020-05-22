@@ -8,7 +8,10 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 import unittest
 
+from lxml import etree
+
 from resources.lib.modules.addon import Addon
+from tests.xbmc import to_unicode
 
 
 class IntegrationTest(unittest.TestCase):
@@ -31,16 +34,18 @@ class IntegrationTest(unittest.TestCase):
         for path in [m3u_path, epg_path]:
             self.assertTrue(os.path.exists(path), '%s does not exist' % path)
 
+        # Validate playlist
         with open(m3u_path, 'r') as fdesc:
-            data = fdesc.read()
+            data = to_unicode(fdesc.read())
             self.assertTrue('#EXTM3U' in data)
             self.assertTrue('channel1.com' in data)
             self.assertTrue('radio1.com' in data)
+            self.assertTrue('één.be' in data)
 
-        with open(epg_path, 'r') as fdesc:
-            data = fdesc.read()
-            self.assertTrue('channel1.com' in data)
-            self.assertTrue('1987-06-15' in data)
+        # Validate EPG
+        xml = etree.parse(epg_path)
+        self.assertIsNotNone(xml.find('./channel[@id="channel1.com"]'))
+        self.assertIsNotNone(xml.find('./channel[@id="één.be"]'))
 
 
 if __name__ == '__main__':

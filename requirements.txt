@@ -1,4 +1,5 @@
 coverage
+lxml
 polib
 pylint
 python-dateutil

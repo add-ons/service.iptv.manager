@@ -67,6 +67,13 @@ class IPTVManager:
                 logo='https://example.com/radio1.png',
                 radio=True,
             ),
+            dict(
+                id='één.be',
+                name='één',
+                preset=101,
+                stream='plugin://plugin.video.example/play/één',
+                logo='https://example.com/één.png',
+            ),
         ]
         return dict(version=1, streams=streams)
 
@@ -80,8 +87,8 @@ class IPTVManager:
                 dict(
                     start=now.isoformat(),
                     stop=(now + datetime.timedelta(seconds=1800)).isoformat(),
-                    title='This is a show',
-                    description='This is the description of the show',
+                    title='This is a show with an & ampersant.',
+                    description='This is the description of the show € 4 + 4 > 6',
                     subtitle='Pilot episode',
                     episode='S01E01',
                     image='https://example.com/image.png',
@@ -90,7 +97,7 @@ class IPTVManager:
                 dict(
                     start=(now + datetime.timedelta(seconds=1800)).isoformat(),
                     stop=(now + datetime.timedelta(seconds=3600)).isoformat(),
-                    title='This is a show 2',
+                    title='This is a show 2 named "Show 2"',
                     description='This is the description of the show 2',
                     image=None,
                 )
@@ -109,6 +116,18 @@ class IPTVManager:
                     title='This is a show 4',
                     description='This is the description of the show 4',
                     image=None,
+                )
+            ],
+            'één.be': [
+                dict(
+                    start=now.isoformat(),
+                    stop=(now + datetime.timedelta(seconds=1800)).isoformat(),
+                    title='This is a show on één.',
+                    description='This is the description of the show on één',
+                    subtitle='Pilot episode',
+                    episode='S01E01',
+                    image='https://example.com/image.png',
+                    date='1987-06-15',
                 )
             ],
         }
