@@ -118,14 +118,14 @@ class ContextMenu:
     def write_channels(channels):
         """Write the channel data to a file."""
         channels_path = os.path.join(kodiutils.addon_profile(), CHANNELS_CACHE)
-        with open(channels_path, 'wb') as fdesc:
+        with open(channels_path, 'w') as fdesc:
             json.dump(channels, fdesc)
 
     @staticmethod
     def _get_addons_for_channel(channel):
         """Returns a list of Add-ons that can play this channel."""
         channels_path = os.path.join(kodiutils.addon_profile(), CHANNELS_CACHE)
-        with open(channels_path, 'rb') as fdesc:
+        with open(channels_path, 'r') as fdesc:
             data = json.load(fdesc)
 
         matches = {}
