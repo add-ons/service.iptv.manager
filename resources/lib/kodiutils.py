@@ -109,6 +109,14 @@ def notification(heading='', message='', icon='info', time=4000):
     Dialog().notification(heading=heading, message=message, icon=icon, time=time)
 
 
+def select(heading='', options=None, autoclose=0, preselect=-1, use_details=False):
+    """Show a Kodi select dialog"""
+    from xbmcgui import Dialog
+    if not heading:
+        heading = addon_name()
+    return Dialog().select(heading, options, autoclose=autoclose, preselect=preselect, useDetails=use_details)
+
+
 def multiselect(heading='', options=None, autoclose=0, preselect=None, use_details=False):
     """Show a Kodi multi-select dialog"""
     from xbmcgui import Dialog
@@ -345,3 +353,8 @@ def execute_builtin(command, *args):
 def get_addon(name):
     """Return an instance of the specified Addon"""
     return xbmcaddon.Addon(name)
+
+
+def get_info_label(label):
+    """Returns a InfoLabel from Kodi"""
+    return xbmc.getInfoLabel(label)

@@ -5,7 +5,15 @@
         <import addon="script.module.dateutil" version="2.6.0"/>
     </requires>
     <extension point="xbmc.service" library="service.py"/>
-	<extension point="xbmc.python.library" library="default.py" />
+    <extension point="xbmc.python.library" library="default.py"/>
+    <extension point="kodi.context.item">
+        <menu id="kodi.core.main">
+            <item library="context.py">
+                <label>30600</label>
+                <visible>Window.IsVisible(tvguide)|Window.IsVisible(tvsearch)</visible>
+            </item>
+        </menu>
+    </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Integrate IPTV Channels from other Add-ons in the Kodi PVR</summary>
         <description lang="en_GB">This add-on integrates IPTV Channels from other Add-ons in the Kodi PVR.</description>

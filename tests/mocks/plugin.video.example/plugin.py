@@ -14,7 +14,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urlparse import parse_qsl, urlparse
 
-logging.basicConfig()
+logging.basicConfig(level=logging.DEBUG)
 _LOGGER = logging.getLogger()
 
 
@@ -51,6 +51,7 @@ class IPTVManager:
                 preset=1,
                 stream='plugin://plugin.video.example/play/1',
                 logo='https://example.com/channel1.png',
+                vod='plugin://plugin.video.example/play/airdate/{date}'
             ),
             dict(
                 id='channel2.com',
@@ -152,3 +153,13 @@ if __name__ == "__main__":
     if route == '/iptv/epg':
         IPTVManager(int(query['port'])).send_epg()
         exit()
+
+    if route.startswith('/play/airdate'):
+        _LOGGER.info('Starting playback of program with route %s and query %s', route, query)
+
+        # Touch a file so we can detect that we ended up here correctly
+        open('/tmp/playback-started.txt', 'a').close()
+        exit()
+
+    _LOGGER.error('Unknown route %s with query %s', route, query)
+    exit(1)

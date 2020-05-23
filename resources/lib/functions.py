@@ -7,6 +7,7 @@ import logging
 
 from resources.lib import kodilogging, kodiutils
 from resources.lib.modules.addon import Addon
+from resources.lib.modules.contextmenu import ContextMenu
 from resources.lib.modules.iptvsimple import IptvSimple
 
 kodilogging.config()
@@ -34,17 +35,26 @@ def refresh():
     kodiutils.open_settings()
 
 
+def play_from_contextmenu():
+    """ Play an item from the Context Menu """
+    # Fetch selection from Kodi
+    program = ContextMenu.get_selection()
+    if program:
+        ContextMenu.play(program)
+
+
 def run(args):
     """ Run the function """
     function = args[1]
     function_map = {
         'setup-iptv-simple': setup_iptv_simple,
         'refresh': refresh,
+        'play_from_contextmenu': play_from_contextmenu,
     }
     try:
         # TODO: allow to pass *args to the function so we can also pass arguments
         _LOGGER.debug('Routing to function: %s', function)
         function_map.get(function)()
-    except TypeError:
+    except (TypeError, IndexError):
         _LOGGER.error('Could not route to %s', function)
         raise

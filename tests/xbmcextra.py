@@ -175,5 +175,5 @@ def import_language(language):
     return podb
 
 
-ADDON_INFO = read_addon_xml('addon.xml')
-ADDON_ID = next(iter(list(ADDON_INFO.values()))).get('id')
+ADDON_INFO = next(iter(list(read_addon_xml('addon.xml').values())))
+ADDON_ID = ADDON_INFO.get('id')

@@ -9,6 +9,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import sys
 from xbmcextra import kodi_to_ansi
 
+from tests.xbmc import VideoInfoTag
+
 
 class Control:
     """A reimplementation of the xbmcgui Control class"""
@@ -63,12 +65,10 @@ class Dialog:
         """A stub implementation for the xbmcgui Dialog class info() method"""
 
     @staticmethod
-    def select(heading, opt_list, autoclose=0, preselect=None, useDetails=False):
+    def select(heading, list, autoclose=0, preselect=-1, useDetails=False):  # pylint: disable=redefined-builtin
         """A stub implementation for the xbmcgui Dialog class select() method"""
-        if preselect is None:
-            preselect = []
         heading = kodi_to_ansi(heading)
-        print('\033[37;44;1mSELECT:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, ', '.join(opt_list)))
+        print('\033[37;44;1mSELECT:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, ', '.join(list)))
         return -1
 
     @staticmethod
@@ -266,6 +266,41 @@ class ListItem:
         """A stub implementation for the xbmcgui ListItem class setUniqueIDs() method"""
         return
 
+    def getLabel(self):
+        """A stub implementation for the xbmcgui ListItem class getLabel() method"""
+        return self.label
+
+    def getLabel2(self):
+        """A stub implementation for the xbmcgui ListItem class getLabel2() method"""
+        return self.label2
+
+    def getPath(self):
+        """A stub implementation for the xbmcgui ListItem class getPath() method"""
+        return self.path
+
+    def getfilename(self):
+        """A stub implementation for the xbmcgui ListItem class getfilename() method"""
+        return self.path
+
+    @staticmethod
+    def getArt(key):
+        """A stub implementation for the xbmcgui ListItem class getArt() method"""
+        return {}
+
+    @staticmethod
+    def isSelected():
+        """A stub implementation for the xbmcgui ListItem class isSelected() method"""
+        return True
+
+    @staticmethod
+    def getProperty(key):
+        """A stub implementation for the xbmcgui ListItem class getProperty() method"""
+        return None
+
+    @staticmethod
+    def getVideoInfoTag():
+        """A stub implementation for the xbmcgui ListItem class getVideoInfoTag() method"""
+        return VideoInfoTag()
 
 class Window:
     """A reimplementation of the xbmcgui Window"""

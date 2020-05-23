@@ -22,3 +22,4 @@ Thumbs.db
 # IPTV Manager output
 tests/userdata/playlist.m3u8
 tests/userdata/epg.xml
+tests/userdata/channels.json
