@@ -38,21 +38,21 @@ class ContextMenu:
             kodiutils.notification(message=kodiutils.localize(30710, channel=program.get('channel')))  # Could not find an Add-on...
             return
 
-        elif len(addons) == 1:
+        if len(addons) == 1:
             # Channel has one Add-on. Play it directly.
             _LOGGER.debug('One Add-on was found to play %s: %s', program.get('channel'), addons)
             cls._play(addons.values()[0], program)
+            return
 
-        else:
-            # Ask the user to pick an Add-on
-            _LOGGER.debug('Multiple Add-on were found to play %s: %s', program.get('channel'), addons)
-            addons_list = list(addons)
-            ret = kodiutils.select(heading=kodiutils.localize(30711), options=addons_list)  # Select an Add-on...
-            if ret == -1:
-                _LOGGER.debug('The selection to play an item from %s was canceled', program.get('channel'))
-                return
+        # Ask the user to pick an Add-on
+        _LOGGER.debug('Multiple Add-on were found to play %s: %s', program.get('channel'), addons)
+        addons_list = list(addons)
+        ret = kodiutils.select(heading=kodiutils.localize(30711), options=addons_list)  # Select an Add-on...
+        if ret == -1:
+            _LOGGER.debug('The selection to play an item from %s was canceled', program.get('channel'))
+            return
 
-            cls._play(addons.get(addons_list[ret]), program)
+        cls._play(addons.get(addons_list[ret]), program)
 
     @classmethod
     def _play(cls, uri, program):

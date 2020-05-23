@@ -167,7 +167,7 @@ def executebuiltin(function):
     import re
     try:
         command, params = re.search(r'([A-Za-z]+)\(([^\)]+)\)', function).groups()
-        if command == 'RunPlugin' or command == 'PlayMedia':
+        if command in ['RunPlugin', 'PlayMedia']:
             addon, route = re.search(r'plugin://([^/]+)(.*)', params).groups()
             if addon:
                 import subprocess
