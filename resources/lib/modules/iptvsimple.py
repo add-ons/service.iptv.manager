@@ -152,11 +152,14 @@ class IptvSimple:
                 for item in epg[key]:
                     start = dateutil.parser.parse(item.get('start')).strftime('%Y%m%d%H%M%S %z')
                     stop = dateutil.parser.parse(item.get('stop')).strftime('%Y%m%d%H%M%S %z')
+                    title = item.get('title')
+                    if not item.get('available', True):
+                        title = '[I]' + title + '[/I]'
 
                     fdesc.write('<programme start="{start}" stop="{stop}" channel="{channel}">\n'.format(start=start,
                                                                                                          stop=stop,
                                                                                                          channel=cls._xml_encode(key)).encode('utf8'))
-                    fdesc.write(' <title>{title}</title>\n'.format(title=cls._xml_encode(item.get('title'))).encode('utf-8'))
+                    fdesc.write(' <title>{title}</title>\n'.format(title=cls._xml_encode(title)).encode('utf-8'))
                     if item.get('description'):
                         fdesc.write(' <desc>{description}</desc>\n'.format(description=cls._xml_encode(item.get('description'))).encode('utf-8'))
                     if item.get('subtitle'):
