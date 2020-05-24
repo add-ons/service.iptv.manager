@@ -4,6 +4,10 @@
         <import addon="xbmc.python" version="2.26.0"/>
         <import addon="script.module.dateutil" version="2.6.0"/>
     </requires>
+    <!-- This is needed to get an add-on icon -->
+    <extension point="xbmc.python.script" library="default.py">
+        <provides>executable</provides>
+    </extension>
     <extension point="xbmc.service" library="service.py"/>
 	<extension point="xbmc.python.library" library="default.py" />
     <extension point="xbmc.addon.metadata">

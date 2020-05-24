@@ -34,12 +34,18 @@ def refresh():
     kodiutils.open_settings()
 
 
+def open_settings():
+    """ Open the settings for IPTV Manager """
+    kodiutils.open_settings()
+
+
 def run(args):
     """ Run the function """
     function = args[1]
     function_map = {
         'setup-iptv-simple': setup_iptv_simple,
         'refresh': refresh,
+        'open_settings': open_settings,
     }
     try:
         # TODO: allow to pass *args to the function so we can also pass arguments
