@@ -358,3 +358,8 @@ def get_addon(name):
 def get_info_label(label):
     """Returns a InfoLabel from Kodi"""
     return xbmc.getInfoLabel(label)
+
+
+def get_region(key):
+    """Returns Region information from Kodi"""
+    return xbmc.getRegion(key)

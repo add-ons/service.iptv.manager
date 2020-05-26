@@ -89,10 +89,11 @@ class ContextMenu:
         channel = kodiutils.to_unicode(kodiutils.get_info_label('ListItem.ChannelName'))
 
         # Parse begin to a datetime
+        date_format = kodiutils.get_region('dateshort')
         try:
-            start = datetime.strptime(date, '%d-%m-%Y %H:%M')
+            start = datetime.strptime(date, date_format + ' %H:%M')
         except TypeError:
-            start = datetime(*(time.strptime(date, '%d-%m-%Y %H:%M')[0:6]))
+            start = datetime(*(time.strptime(date, date_format + ' %H:%M')[0:6]))
 
         # Parse duration to seconds
         splitted = duration.split(':')
