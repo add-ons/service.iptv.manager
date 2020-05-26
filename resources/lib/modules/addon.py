@@ -224,16 +224,20 @@ class Addon:
         # The remote and should connect back as soon as possible so we know that the request is being processed
         sock.settimeout(timeout)
 
-        # Accept one client
         try:
             _LOGGER.debug('Waiting for a connection from %s on port %s...', self.addon_id, sock.getsockname()[1])
+
+            # Accept one client
             conn, addr = sock.accept()
             _LOGGER.debug('Connected to %s:%s! Waiting for result...', addr[0], addr[1])
+
+            # We have no timeout when the connection is established
+            conn.settimeout(None)
 
             # Read until the remote end closes the connection
             buf = ''
             while True:
-                chunk = conn.recv(1024)
+                chunk = conn.recv(4096)
                 if not chunk:
                     break
                 buf += chunk.decode()

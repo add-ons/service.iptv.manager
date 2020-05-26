@@ -173,7 +173,7 @@ def executebuiltin(function):
                 import subprocess
                 addon_info = read_addon_xml('tests/mocks/%s/addon.xml' % addon)
                 pluginsource = next(iter(list(addon_info.values()))).get('pluginsource')
-                subprocess.call(['python', 'tests/mocks/%s/%s' % (addon, pluginsource), route])
+                subprocess.Popen(['python', 'tests/mocks/%s/%s' % (addon, pluginsource), route])
 
     except AttributeError:
         pass
