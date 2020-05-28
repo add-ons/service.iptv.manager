@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Addon Module """
+""" Context Menu Module """
 
 from __future__ import absolute_import, division, unicode_literals
 
