@@ -30,7 +30,13 @@ class ContextMenu:
 
         # Get a list of addons that can play the selected channel
         # We do the lookup based on Channel Name, since that's all we have
-        addons = cls._get_addons_for_channel(program.get('channel'))
+        try:
+            addons = cls._get_addons_for_channel(program.get('channel'))
+        except IOError:
+            if kodiutils.yesno_dialog(message=kodiutils.localize(30713)):  # The EPG data is not up to date...
+                from resources.lib.modules.addon import Addon
+                Addon.refresh(True)
+            return
 
         if not addons:
             # Channel was not found.
@@ -131,7 +137,13 @@ class ContextMenu:
     @staticmethod
     def write_channels(channels):
         """Write the channel data to a file."""
-        channels_path = os.path.join(kodiutils.addon_profile(), CHANNELS_CACHE)
+        output_dir = kodiutils.addon_profile()
+
+        # Make sure our output dir exists
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+        channels_path = os.path.join(output_dir, CHANNELS_CACHE)
         with open(channels_path, 'w') as fdesc:
             json.dump(channels, fdesc)
 
