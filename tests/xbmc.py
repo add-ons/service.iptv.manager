@@ -39,7 +39,7 @@ INFO_LABELS = {
 
 REGIONS = {
     'datelong': '%A, %e %B %Y',
-    'dateshort': '%Y-%m-%d',
+    'dateshort': '%d-%m-%Y',
 }
 
 GLOBAL_SETTINGS = global_settings()
@@ -167,7 +167,7 @@ def executebuiltin(function):
     import re
     try:
         command, params = re.search(r'([A-Za-z]+)\(([^\)]+)\)', function).groups()
-        if command == 'RunPlugin':
+        if command in ['RunPlugin', 'PlayMedia']:
             addon, route = re.search(r'plugin://([^/]+)(.*)', params).groups()
             if addon:
                 import subprocess
@@ -194,8 +194,7 @@ def executeJSONRPC(jsonrpccommand):
     if command.get('method') == 'Textures.RemoveTexture':
         return json.dumps(dict(id=1, jsonrpc='2.0', result="OK"))
     if command.get('method') == 'Addons.GetAddons':
-        # TODO: generate a list of addons based on the folders in tests/mocks
-        return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(addons=[dict(addonid='plugin.video.example')])))
+        return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(addons=[dict(addonid=addon) for addon in os.listdir('tests/mocks')])))
     log("executeJSONRPC does not implement method '{method}'".format(**command), 'Error')
     return json.dumps(dict(error=dict(code=-1, message='Not implemented'), id=1, jsonrpc='2.0'))
 

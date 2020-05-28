@@ -4,3 +4,4 @@ polib
 pylint
 python-dateutil
 tox
+mock

@@ -8,5 +8,9 @@
     "iptv.enabled": "true",
     "iptv.channels_uri": "plugin://plugin.video.example/iptv/channels",
     "iptv.epg_uri": "plugin://plugin.video.example/iptv/epg"
+  },
+  "plugin.video.example.two": {
+    "iptv.enabled": "true",
+    "iptv.channels_uri": "plugin://plugin.video.example.two/iptv/channels"
   }
 }

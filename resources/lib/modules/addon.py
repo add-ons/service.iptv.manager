@@ -10,6 +10,7 @@ import socket
 import time
 
 from resources.lib import kodiutils
+from resources.lib.modules.contextmenu import ContextMenu
 from resources.lib.modules.iptvsimple import IptvSimple
 
 _LOGGER = logging.getLogger(__name__)
@@ -55,8 +56,7 @@ class Addon:
         else:
             progress = None
 
-        addons = cls.get_iptv_addons()
-
+        addons = cls.detect_iptv_addons()
         for index, addon in enumerate(addons):
             _LOGGER.info('Updating IPTV data for %s...', addon.addon_id)
 
@@ -65,13 +65,19 @@ class Addon:
                                 kodiutils.localize(30704).format(addon=kodiutils.addon_name(addon.addon_obj)))  # Fetching channels and guide of {addon}...
 
             # Fetch channels
-            channels.extend(addon.get_channels())
+            channels.append(dict(
+                addon_id=addon.addon_id,
+                addon_name=kodiutils.addon_name(addon.addon_obj),
+                channels=addon.get_channels(),
+            ))
+
             if progress and progress.iscanceled():
                 progress.close()
                 return
 
-            # Fetch EPG data
+            # Fetch EPG
             epg.update(addon.get_epg())
+
             if progress and progress.iscanceled():
                 progress.close()
                 return
@@ -79,6 +85,8 @@ class Addon:
         # Write files
         if show_progress:
             progress.update(100, kodiutils.localize(30705))  # Updating channels and guide...
+
+        ContextMenu.write_channels(channels)
 
         IptvSimple.write_playlist(channels)
         IptvSimple.write_epg(epg)
@@ -99,7 +107,7 @@ class Addon:
             kodiutils.ok_dialog(message=kodiutils.localize(30706))  # The channels and guide are updated successfully!
 
     @staticmethod
-    def get_iptv_addons():
+    def detect_iptv_addons():
         """ Find add-ons that provide IPTV channel data """
         result = kodiutils.jsonrpc(method="Addons.GetAddons", params={'installed': True, 'enabled': True, 'type': 'xbmc.python.pluginsource'})
 

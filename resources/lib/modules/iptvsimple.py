@@ -95,25 +95,28 @@ class IptvSimple:
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
 
+        # Write playlist for IPTV Simple
         playlist_path = os.path.join(output_dir, IPTV_SIMPLE_PLAYLIST)
 
         with open(playlist_path + '.tmp', 'wb') as fdesc:
             m3u8_data = '#EXTM3U\n'
 
-            for channel in channels:
-                m3u8_data += '#EXTINF:-1 tvg-name="{name}"'.format(**channel)
-                if channel.get('id'):
-                    m3u8_data += ' tvg-id="{id}"'.format(**channel)
-                if channel.get('logo'):
-                    m3u8_data += ' tvg-logo="{logo}"'.format(**channel)
-                if channel.get('preset'):
-                    m3u8_data += ' tvg-chno="{preset}"'.format(**channel)
-                if channel.get('group'):
-                    m3u8_data += ' group-title="{group}"'.format(**channel)
-                if channel.get('radio'):
-                    m3u8_data += ' radio="true"'
-                m3u8_data += ',{name}\n{stream}\n\n'.format(**channel)
-            fdesc.write(m3u8_data.encode('utf-8'))
+            for addon in channels:
+                m3u8_data += '## {addon_name}\n'.format(**addon)
+                for channel in addon['channels']:
+                    m3u8_data += '#EXTINF:-1 tvg-name="{name}"'.format(**channel)
+                    if channel.get('id'):
+                        m3u8_data += ' tvg-id="{id}"'.format(**channel)
+                    if channel.get('logo'):
+                        m3u8_data += ' tvg-logo="{logo}"'.format(**channel)
+                    if channel.get('preset'):
+                        m3u8_data += ' tvg-chno="{preset}"'.format(**channel)
+                    if channel.get('group'):
+                        m3u8_data += ' group-title="{group}"'.format(**channel)
+                    if channel.get('radio'):
+                        m3u8_data += ' radio="true"'
+                    m3u8_data += ',{name}\n{stream}\n\n'.format(**channel)
+                fdesc.write(m3u8_data.encode('utf-8'))
 
         # Move new file to the right place
         if os.path.isfile(playlist_path):
@@ -149,11 +152,14 @@ class IptvSimple:
                 for item in epg[key]:
                     start = dateutil.parser.parse(item.get('start')).strftime('%Y%m%d%H%M%S %z')
                     stop = dateutil.parser.parse(item.get('stop')).strftime('%Y%m%d%H%M%S %z')
+                    title = item.get('title')
+                    if not item.get('available', True):
+                        title = '[I]' + title + '[/I]'
 
                     fdesc.write('<programme start="{start}" stop="{stop}" channel="{channel}">\n'.format(start=start,
                                                                                                          stop=stop,
                                                                                                          channel=cls._xml_encode(key)).encode('utf8'))
-                    fdesc.write(' <title>{title}</title>\n'.format(title=cls._xml_encode(item.get('title'))).encode('utf-8'))
+                    fdesc.write(' <title>{title}</title>\n'.format(title=cls._xml_encode(title)).encode('utf-8'))
                     if item.get('description'):
                         fdesc.write(' <desc>{description}</desc>\n'.format(description=cls._xml_encode(item.get('description'))).encode('utf-8'))
                     if item.get('subtitle'):

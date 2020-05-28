@@ -6,6 +6,12 @@ msgstr ""
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+### CONTEXT MENU
+msgctxt "#30600"
+msgid "Play with IPTV Manager"
+msgstr "Afspelen met IPTV Manager"
+
+
 ### MESSAGES
 msgctxt "#30700"
 msgid "Are you sure you want to setup IPTV Simple for the use with IPTV Manager? Any existing configuration of IPTV Simple will be overwritten."
@@ -34,6 +40,19 @@ msgstr "Updaten van de kanalenlijst en de gids..."
 msgctxt "#30706"
 msgid "The channels and guide are updated successfully!"
 msgstr "De kanalenlijst en gids zijn sucessvol geüpdate."
+
+msgctxt "#30710"
+msgid "Could not find an Add-on to play programs from {channel}"
+msgstr "Kon geen Add-on vinden om programma's van {channel} af te spelen"
+
+msgctxt "#30711"
+msgid "Select an Add-on to use for playback"
+msgstr "Selecteer een Add-on om te gebruiken voor het afspelen"
+
+msgctxt "#30712"
+msgid "Could not determine the currently selected program. Please try again without selecting another program."
+msgstr "Kon het geselecteerde programma niet bepalen. Probeer opnieuw zonder een andere programma te selecteren."
+
 
 
 ### SETTINGS
