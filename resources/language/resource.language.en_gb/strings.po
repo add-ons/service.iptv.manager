@@ -41,7 +41,7 @@ msgid "The channels and guide are updated successfully!"
 msgstr ""
 
 msgctxt "#30710"
-msgid "Could not find an Add-on to play programs from {channel}"
+msgid "Could not find an Add-on to play programs from {channel}."
 msgstr ""
 
 msgctxt "#30711"
@@ -50,6 +50,10 @@ msgstr ""
 
 msgctxt "#30712"
 msgid "Could not determine the currently selected program. Please try again without selecting another program."
+msgstr ""
+
+msgctxt "#30713"
+msgid "The EPG data is not up to date. Do you want to refresh the EPG now?"
 msgstr ""
 
 
