@@ -26,7 +26,7 @@ class ContextMenu:
     @classmethod
     def play(cls, program):
         """Play the selected program."""
-        _LOGGER.debug('Playing %s', program)
+        _LOGGER.debug('Asked to play %s', program)
 
         # Get a list of addons that can play the selected channel
         # We do the lookup based on Channel Name, since that's all we have
@@ -35,7 +35,8 @@ class ContextMenu:
         if not addons:
             # Channel was not found.
             _LOGGER.debug('No Add-on was found to play %s', program.get('channel'))
-            kodiutils.notification(message=kodiutils.localize(30710, channel=program.get('channel')))  # Could not find an Add-on...
+            kodiutils.notification(
+                message=kodiutils.localize(30710, channel=program.get('channel')))  # Could not find an Add-on...
             return
 
         if len(addons) == 1:
@@ -63,19 +64,31 @@ class ContextMenu:
         if '{duration}' in uri:
             uri = uri.format(date=program.get('duration').isoformat())
 
-        _LOGGER.debug('Playing "%s"', uri)
+        _LOGGER.debug('Executing "%s"', uri)
         kodiutils.execute_builtin('PlayMedia', uri)
 
     @classmethod
     def get_selection(cls):
         """Retrieve information about the selected ListItem."""
 
-        # The selected ListItem should be in sys.listitem, but I could not find real data in there that we can use for EPG selections.
-        # Therefore, we use xbmc.getInfoLabel(ListItem.xxx), but that references the currently selected ListItem. This could not be the same as the
-        # item where the Context Menu was opened on, when the selection was moved really quick before the Python code was started.
-        # It seems I'm not alone in this: https://forum.kodi.tv/showthread.php?tid=294357
-
-        # cls._debug_get_selection()
+        # The selected ListItem is available in sys.listitem, but there is not enough data that we can use to know what
+        # exact item was selected. Therefore, we use xbmc.getInfoLabel(ListItem.xxx), that references the currently
+        # selected ListItem. This is not always the same as the item where the Context Menu was opened on when the
+        # selection was moved really quick before the Python code was started. This often happens when using the mouse,
+        # but should not happen when using the keyboard or a remote control. Therefore, we do a check to see if the
+        # sys.listitem.getPath is the same as xbmc.getInfoLabel(ListItem.FolderPath) before continuing.
+        # For now, this is the best we can do.
+        #
+        # The sys.listitem.getPath() returns a string like "pvr://guide/0016/2020-05-28 09:24:47.epg". We could use the
+        # date to find out what item was selected, but we can't match the channel with something that makes sense. It's
+        # not the same ID as the ID in the JSON-RPC "PVR.GetChannels" or "PVR.GetChannelDetails" commands.
+        #
+        # The available fields are:
+        # * sys.listitem.getLabel()  # Universiteit van Vlaanderen
+        # * sys.listitem.getPath()   # pvr://guide/0016/2020-05-28 09:24:47.epg
+        #
+        # I would have preferred to use the Channel ID we use for for the epg (like een.be), but that isn't available.
+        # We only have a name (ListItem.ChannelName), or the channel number (ListItem.ChannelNumberLabel).
 
         # Check if the selected item is also the intended item
         if sys.listitem.getPath() != kodiutils.get_info_label('ListItem.FolderPath'):  # pylint: disable=no-member
@@ -136,79 +149,3 @@ class ContextMenu:
                     matches.update({_addon.get('addon_name'): _channel.get('vod')})
 
         return matches
-
-    @staticmethod
-    def _debug_get_selection():
-        """Return debugging data for getting the current ListItem"""
-        sys_listitem = sys.listitem  # pylint: disable=no-member
-        # Show the data we can get from sys_listitem. This is the item where the context menu was opened on.
-        _LOGGER.debug('sys.listitem.getLabel() = %s', sys_listitem.getLabel())
-        _LOGGER.debug('sys.listitem.getLabel2() = %s', sys_listitem.getLabel2())
-        _LOGGER.debug('sys.listitem.getfilename() = %s', sys_listitem.getfilename())  # inconsistent case
-        _LOGGER.debug('sys.listitem.getPath() = %s', sys_listitem.getPath())
-        _LOGGER.debug('sys.listitem.getArt("thumb") = %s', sys_listitem.getArt('thumb'))
-        _LOGGER.debug('sys.listitem.getArt("poster") = %s', sys_listitem.getArt('poster'))
-        _LOGGER.debug('sys.listitem.getArt("banner") = %s', sys_listitem.getArt('banner'))
-        _LOGGER.debug('sys.listitem.getArt("fanart") = %s', sys_listitem.getArt('fanart'))
-        _LOGGER.debug('sys.listitem.getArt("clearart") = %s', sys_listitem.getArt('clearart'))
-        _LOGGER.debug('sys.listitem.getArt("clearlogo") = %s', sys_listitem.getArt('clearlogo'))
-        _LOGGER.debug('sys.listitem.getArt("landscape") = %s', sys_listitem.getArt('landscape'))
-        _LOGGER.debug('sys.listitem.getArt("icon") = %s', sys_listitem.getArt('icon'))
-        _LOGGER.debug('sys.listitem.isSelected() = %s', sys_listitem.isSelected())
-
-        for prop in ['id', 'dbid', 'AspectRatio', 'Date', 'fanart_image']:
-            _LOGGER.debug('sys.listitem.getProperty("%s") = %s', prop, sys_listitem.getProperty(prop))
-
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getCast() = %s', sys_listitem.getVideoInfoTag().getCast())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getDbId() = %s', sys_listitem.getVideoInfoTag().getDbId())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getDirector() = %s', sys_listitem.getVideoInfoTag().getDirector())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getFile() = %s', sys_listitem.getVideoInfoTag().getFile())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getFirstAired() = %s', sys_listitem.getVideoInfoTag().getFirstAired())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getIMDBNumber() = %s', sys_listitem.getVideoInfoTag().getIMDBNumber())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getLastPlayed() = %s', sys_listitem.getVideoInfoTag().getLastPlayed())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getMediaType() = %s', sys_listitem.getVideoInfoTag().getMediaType())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getOriginalTitle() = %s', sys_listitem.getVideoInfoTag().getOriginalTitle())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getPath() = %s', sys_listitem.getVideoInfoTag().getPath())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getPictureURL() = %s', sys_listitem.getVideoInfoTag().getPictureURL())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getPlayCount() = %s', sys_listitem.getVideoInfoTag().getPlayCount())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getPlot() = %s', sys_listitem.getVideoInfoTag().getPlot())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getPlotOutline() = %s', sys_listitem.getVideoInfoTag().getPlotOutline())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getPremiered() = %s', sys_listitem.getVideoInfoTag().getPremiered())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getRating() = %s', sys_listitem.getVideoInfoTag().getRating())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getTagLine() = %s', sys_listitem.getVideoInfoTag().getTagLine())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getTitle() = %s', sys_listitem.getVideoInfoTag().getTitle())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getTVShowTitle() = %s', sys_listitem.getVideoInfoTag().getTVShowTitle())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getVotes() = %s', sys_listitem.getVideoInfoTag().getVotes())
-        _LOGGER.debug('sys.listitem.getVideoInfoTag().getYear() = %s', sys_listitem.getVideoInfoTag().getYear())
-
-        # Show the data we can get from xmbc.getInfoLabel.  This is the item that is currently focused.
-        items = [
-            'ListItem.Thumb',
-            'ListItem.Icon',
-            'ListItem.Overlay',
-            'ListItem.Tag',
-            'ListItem.HasEPG',
-            'ListItem.HasArchive',
-            'ListItem.EpgEventTitle',
-            'ListItem.EpgEventIcon',
-            'ListItem.ChannelName',
-            'ListItem.ChannelGroup',
-            'ListItem.ChannelNumberLabel',
-            'ListItem.Date',
-            'ListItem.Duration',
-            'ListItem.EndDate',
-            'ListItem.EndTime',
-            'ListItem.EpisodeName',
-            'ListItem.FileName',
-            'ListItem.FolderPath',
-            'ListItem.Genre',
-            'ListItem.Label',
-            'ListItem.Path',
-            'ListItem.Plot',
-            'ListItem.PlotOutline',
-            'ListItem.StartDate',
-            'ListItem.StartTime',
-            'ListItem.Title',
-        ]
-        for item in items:
-            _LOGGER.debug('xmbc.getInfoLabel("%s") = %s', item, kodiutils.to_unicode(kodiutils.get_info_label(item)))

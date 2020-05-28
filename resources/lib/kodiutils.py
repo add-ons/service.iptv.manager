@@ -346,7 +346,6 @@ def jsonrpc(*args, **kwargs):
 
 def execute_builtin(command, *args):
     """Execute a Kodi builtin function"""
-    _LOGGER.debug('Execute: %s(%s)', command, ",".join(args))
     xbmc.executebuiltin('{command}({params})'.format(command=command, params=",".join(args)))
 
 
