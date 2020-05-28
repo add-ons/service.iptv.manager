@@ -22,6 +22,7 @@ doesn't require a backend like TVHeadend since it handles all the streams inside
 * [VRT NU (plugin.video.vrt.nu)](https://github.com/add-ons/plugin.video.vrt.nu/)
 * [VRT Radio (plugin.audio.vrt.radio)](https://github.com/add-ons/plugin.audio.vrt.radio/)
 * [Regio TV (plugin.video.regiotv)](https://github.com/add-ons/plugin.video.regiotv/)
+* [VIER-VIJF-ZES (plugin.video.viervijfzes)](https://github.com/add-ons/plugin.video.viervijfzes/)
 
 Is your Add-on not listed above? Feel free to open a Pull Request to add it or let us know!
 
