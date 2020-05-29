@@ -10,7 +10,7 @@ import xbmcaddon
 
 
 class KodiLogHandler(logging.StreamHandler):
-    """ A log handler for Kodi """
+    """A log handler for Kodi"""
 
     def __init__(self):
         logging.StreamHandler.__init__(self)
@@ -19,7 +19,7 @@ class KodiLogHandler(logging.StreamHandler):
         self.setFormatter(formatter)
 
     def emit(self, record):
-        """ Emit a log message """
+        """Emit a log message"""
         levels = {
             logging.CRITICAL: xbmc.LOGFATAL,
             logging.ERROR: xbmc.LOGERROR,
@@ -34,11 +34,11 @@ class KodiLogHandler(logging.StreamHandler):
             xbmc.log(self.format(record).encode('utf-8', 'ignore'), levels[record.levelno])
 
     def flush(self):
-        """ Flush the messages """
+        """Flush the messages"""
 
 
 def config():
-    """ Setup the logger with this handler """
+    """Setup the logger with this handler"""
     logger = logging.getLogger()
     logger.addHandler(KodiLogHandler())
     logger.setLevel(logging.DEBUG)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Context Menu Module """
+"""Context Menu Module"""
 
 from __future__ import absolute_import, division, unicode_literals
 
@@ -48,7 +48,7 @@ class ContextMenu:
         if len(addons) == 1:
             # Channel has one Add-on. Play it directly.
             _LOGGER.debug('One Add-on was found to play %s: %s', program.get('channel'), addons)
-            cls._play(addons.values()[0], program)
+            cls._play(list(addons.values())[0], program)
             return
 
         # Ask the user to pick an Add-on
@@ -107,12 +107,12 @@ class ContextMenu:
         duration = kodiutils.get_info_label('ListItem.Duration')
         channel = kodiutils.to_unicode(kodiutils.get_info_label('ListItem.ChannelName'))
 
-        # Parse begin to a datetime
-        date_format = kodiutils.get_region('dateshort')
+        # Parse begin to a datetime. The ListItem.Date doesn't contain seconds
+        date_format = kodiutils.get_region('dateshort') + ' ' + kodiutils.get_region('time').replace(':%S', '')
         try:
-            start = datetime.strptime(date, date_format + ' %H:%M')
+            start = datetime.strptime(date, date_format)
         except TypeError:
-            start = datetime(*(time.strptime(date, date_format + ' %H:%M')[0:6]))
+            start = datetime(*(time.strptime(date, date_format)[0:6]))
 
         # Parse duration to seconds
         splitted = duration.split(':')

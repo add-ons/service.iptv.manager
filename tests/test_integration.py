@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Tests for Integration """
+"""Tests for Integration"""
 
 # pylint: disable=invalid-name,missing-docstring,no-self-use
 
@@ -21,10 +21,10 @@ from tests.xbmcgui import ListItem
 
 
 class IntegrationTest(unittest.TestCase):
-    """ Integration Tests """
+    """Integration Tests"""
 
     def test_refresh(self):
-        """ Test the refreshing of data """
+        """Test the refreshing of data"""
         m3u_path = 'tests/userdata/playlist.m3u8'
         epg_path = 'tests/userdata/epg.xml'
 
@@ -93,7 +93,7 @@ class IntegrationTest(unittest.TestCase):
 
     @staticmethod
     def _wait_for_file(filename, timeout=10):
-        """ Wait until a file appears on the filesystem. """
+        """Wait until a file appears on the filesystem."""
         deadline = time.time() + timeout
         while time.time() < deadline:
             if os.path.exists(filename):

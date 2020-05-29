@@ -302,6 +302,7 @@ class ListItem:
         """A stub implementation for the xbmcgui ListItem class getVideoInfoTag() method"""
         return VideoInfoTag()
 
+
 class Window:
     """A reimplementation of the xbmcgui Window"""
 
