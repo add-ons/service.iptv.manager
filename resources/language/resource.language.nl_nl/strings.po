@@ -37,10 +37,6 @@ msgctxt "#30705"
 msgid "Updating channels and guide..."
 msgstr "Updaten van de kanalenlijst en de gids..."
 
-msgctxt "#30706"
-msgid "The channels and guide are updated successfully!"
-msgstr "De kanalenlijst en gids zijn sucessvol geüpdate."
-
 msgctxt "#30710"
 msgid "Could not find an Add-on to play programs from {channel}."
 msgstr "Kon geen Add-on vinden om programma's van {channel} af te spelen."

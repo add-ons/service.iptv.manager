@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Functions code """
+"""Functions code"""
 
 from __future__ import absolute_import, division, unicode_literals
 
@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def setup_iptv_simple():
-    """ Setup IPTV Simple """
+    """Setup IPTV Simple"""
     reply = kodiutils.yesno_dialog(message=kodiutils.localize(30700))  # Are you sure...
     if reply:
         if IptvSimple.setup():
@@ -28,7 +28,7 @@ def setup_iptv_simple():
 
 
 def refresh():
-    """ Refresh the channels and EPG """
+    """Refresh the channels and EPG"""
     Addon.refresh(True)
 
     # Open settings again
@@ -36,7 +36,7 @@ def refresh():
 
 
 def play_from_contextmenu():
-    """ Play an item from the Context Menu """
+    """Play an item from the Context Menu"""
     # Fetch selection from Kodi
     program = ContextMenu.get_selection()
     if program:
@@ -44,12 +44,12 @@ def play_from_contextmenu():
 
 
 def open_settings():
-    """ Open the settings for IPTV Manager """
+    """Open the settings for IPTV Manager"""
     kodiutils.open_settings()
 
 
 def run(args):
-    """ Run the function """
+    """Run the function"""
     function = args[1]
     function_map = {
         'setup-iptv-simple': setup_iptv_simple,

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This is the actual IPTV Manager context menu entry point"""
+"""Context menu entry point"""
 
 from __future__ import absolute_import, division, unicode_literals
 

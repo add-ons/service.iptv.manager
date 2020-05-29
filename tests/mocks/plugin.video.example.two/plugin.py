@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" This is a fake addon """
+"""This is a fake addon"""
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
@@ -39,7 +39,7 @@ class IPTVManager:
 
     @via_socket
     def send_channels():  # pylint: disable=no-method-argument
-        """Return JSON-M3U formatted information to IPTV Manager"""
+        """Return JSON-STREAMS formatted information to IPTV Manager"""
         streams = [
             dict(
                 id='channel1.com',
@@ -54,7 +54,7 @@ class IPTVManager:
 
     @via_socket
     def send_epg():  # pylint: disable=no-method-argument
-        """Return JSONTV formatted information to IPTV Manager"""
+        """Return JSON-EPG formatted information to IPTV Manager"""
         epg = {}
         return dict(version=1, epg=epg)
 

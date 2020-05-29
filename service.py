@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Service entry point """
+"""Service entry point"""
 
 from __future__ import absolute_import, division, unicode_literals
 

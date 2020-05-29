@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" IPTV Simple Module """
+"""IPTV Simple Module"""
 
 from __future__ import absolute_import, division, unicode_literals
 
@@ -20,16 +20,16 @@ IPTV_SIMPLE_EPG = 'epg.xml'
 
 
 class IptvSimple:
-    """ Helper class to setup IPTV Simple """
+    """Helper class to setup IPTV Simple"""
 
     restart_required = False
 
     def __init__(self):
-        """ Init """
+        """Init"""
 
     @classmethod
     def setup(cls):
-        """ Setup IPTV Simple """
+        """Setup IPTV Simple"""
         try:
             # Install IPTV Simple
             kodiutils.execute_builtin('InstallAddon', IPTV_SIMPLE_ID)
@@ -63,7 +63,7 @@ class IptvSimple:
 
     @classmethod
     def restart(cls, force=False):
-        """ Restart IPTV Simple """
+        """Restart IPTV Simple"""
         if not force and (kodiutils.get_cond_visibility('Pvr.IsPlayingTv') or kodiutils.get_cond_visibility('Pvr.IsPlayingRadio')):
             # Don't restart when we are Playing TV or Radio
             cls.restart_required = True
@@ -78,17 +78,17 @@ class IptvSimple:
 
     @staticmethod
     def _activate():
-        """ Activate IPTV Simple """
+        """Activate IPTV Simple"""
         kodiutils.jsonrpc(method="Addons.SetAddonEnabled", params={"addonid": IPTV_SIMPLE_ID, "enabled": True})
 
     @staticmethod
     def _deactivate():
-        """ Deactivate IPTV Simple """
+        """Deactivate IPTV Simple"""
         kodiutils.jsonrpc(method="Addons.SetAddonEnabled", params={"addonid": IPTV_SIMPLE_ID, "enabled": False})
 
     @staticmethod
     def write_playlist(channels):
-        """ Write playlist data """
+        """Write playlist data"""
         output_dir = kodiutils.addon_profile()
 
         # Make sure our output dir exists
@@ -116,7 +116,8 @@ class IptvSimple:
                     if channel.get('radio'):
                         m3u8_data += ' radio="true"'
                     m3u8_data += ',{name}\n{stream}\n\n'.format(**channel)
-                fdesc.write(m3u8_data.encode('utf-8'))
+
+            fdesc.write(m3u8_data.encode('utf-8'))
 
         # Move new file to the right place
         if os.path.isfile(playlist_path):
@@ -126,7 +127,7 @@ class IptvSimple:
 
     @classmethod
     def write_epg(cls, epg):
-        """ Write EPG data """
+        """Write EPG data"""
         output_dir = kodiutils.addon_profile()
 
         # Make sure our output dir exists
@@ -136,7 +137,8 @@ class IptvSimple:
         epg_path = os.path.join(output_dir, IPTV_SIMPLE_EPG)
 
         # Write XML file by hand
-        # The reason for this is that it takes less memory to write the file line by line then to construct an XML object in memory and writing that in one go.
+        # The reason for this is that it takes less memory to write the file line by line then to construct an
+        # XML object in memory and writing that in one go.
         # We can't depend on lxml.etree.xmlfile, since that's not available as a Kodi module
         with open(epg_path + '.tmp', 'wb') as fdesc:
             fdesc.write('<?xml version="1.0" encoding="UTF-8"?>\n'.encode('utf-8'))
@@ -154,24 +156,39 @@ class IptvSimple:
                     stop = dateutil.parser.parse(item.get('stop')).strftime('%Y%m%d%H%M%S %z')
                     title = item.get('title')
                     if not item.get('available', True):
-                        title = '[I]' + title + '[/I]'
+                        title = '[COLOR red]x[/COLOR] ' + title
 
-                    fdesc.write('<programme start="{start}" stop="{stop}" channel="{channel}">\n'.format(start=start,
-                                                                                                         stop=stop,
-                                                                                                         channel=cls._xml_encode(key)).encode('utf8'))
-                    fdesc.write(' <title>{title}</title>\n'.format(title=cls._xml_encode(title)).encode('utf-8'))
+                    program = '<programme start="{start}" stop="{stop}" channel="{channel}">\n'.format(
+                        start=start,
+                        stop=stop,
+                        channel=cls._xml_encode(key))
+
+                    program += ' <title>{title}</title>\n'.format(
+                        title=cls._xml_encode(title))
+
                     if item.get('description'):
-                        fdesc.write(' <desc>{description}</desc>\n'.format(description=cls._xml_encode(item.get('description'))).encode('utf-8'))
+                        program += ' <desc>{description}</desc>\n'.format(
+                            description=cls._xml_encode(item.get('description')))
+
                     if item.get('subtitle'):
-                        fdesc.write(' <sub-title>{subtitle}</sub-title>\n'.format(subtitle=cls._xml_encode(item.get('subtitle'))).encode('utf-8'))
+                        program += ' <sub-title>{subtitle}</sub-title>\n'.format(
+                            subtitle=cls._xml_encode(item.get('subtitle')))
+
                     if item.get('episode'):
-                        fdesc.write(
-                            ' <episode-num system="onscreen">{episode}</episode-num>\n'.format(episode=cls._xml_encode(item.get('episode'))).encode('utf-8'))
+                        program += ' <episode-num system="onscreen">{episode}</episode-num>\n'.format(
+                            episode=cls._xml_encode(item.get('episode')))
+
                     if item.get('image'):
-                        fdesc.write(' <icon src="{image}"/>\n'.format(image=cls._xml_encode(item.get('image'))).encode('utf-8'))
+                        program += ' <icon src="{image}"/>\n'.format(
+                            image=cls._xml_encode(item.get('image')))
+
                     if item.get('date'):
-                        fdesc.write(' <date>{date}</date>\n'.format(date=cls._xml_encode(item.get('date'))).encode('utf-8'))
-                    fdesc.write('</programme>\n'.encode('utf-8'))
+                        program += ' <date>{date}</date>\n'.format(
+                            date=cls._xml_encode(item.get('date')))
+
+                    program += '</programme>\n'
+
+                    fdesc.write(program.encode('utf8'))
 
             fdesc.write('</tv>\n'.encode('utf-8'))
 
@@ -183,8 +200,9 @@ class IptvSimple:
 
     @staticmethod
     def _xml_encode(value):
-        value = value.replace('&', '&amp;')
-        value = value.replace('<', '&lt;')
-        value = value.replace('>', '&gt;')
-        value = value.replace('"', '&quot;')
-        return value
+        """Quick and dirty encoding for XML values"""
+        return value \
+            .replace('&', '&amp;') \
+            .replace('<', '&lt;') \
+            .replace('>', '&gt;') \
+            .replace('"', '&quot;')

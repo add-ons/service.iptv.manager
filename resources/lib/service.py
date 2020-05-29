@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Background service code """
+"""Background service code"""
 
 from __future__ import absolute_import, division, unicode_literals
 
@@ -17,14 +17,14 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BackgroundService(Monitor):
-    """ Background service code """
+    """Background service code"""
 
     def __init__(self):
         Monitor.__init__(self)
         self._restart_required = False
 
     def run(self):
-        """ Background loop for maintenance tasks """
+        """Background loop for maintenance tasks"""
         _LOGGER.debug('Service started')
 
         # Service loop
@@ -45,12 +45,12 @@ class BackgroundService(Monitor):
 
     @staticmethod
     def _is_refresh_required():
-        """ Returns if we should trigger an update based on the settings. """
+        """Returns if we should trigger an update based on the settings."""
         refresh_interval = kodiutils.get_setting_int('refresh_interval', 24) * 3600
         last_refreshed = kodiutils.get_setting_int('last_refreshed', 0)
         return (last_refreshed + refresh_interval) <= time.time()
 
 
 def run():
-    """ Run the BackgroundService """
+    """Run the BackgroundService"""
     BackgroundService().run()

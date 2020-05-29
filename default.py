@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This is the actual IPTV Manager script entry point"""
+"""Script entry point"""
 
 from __future__ import absolute_import, division, unicode_literals
 import sys
