@@ -40,6 +40,7 @@ INFO_LABELS = {
 REGIONS = {
     'datelong': '%A, %e %B %Y',
     'dateshort': '%d-%m-%Y',
+    'time': '%H:%M:%S',
 }
 
 GLOBAL_SETTINGS = global_settings()
