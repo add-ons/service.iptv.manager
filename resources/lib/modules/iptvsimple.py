@@ -115,6 +115,13 @@ class IptvSimple:
                         m3u8_data += ' group-title="{group}"'.format(**channel)
                     if channel.get('radio'):
                         m3u8_data += ' radio="true"'
+
+                    if channel.get('vod'):
+                        # This will change if https://github.com/kodi-pvr/pvr.iptvsimple/issues/393 gets implemented
+                        m3u8_data += ' catchup="default"'
+                        m3u8_data += ' catchup-source="{catchup-id}"'
+                        m3u8_data += ' catchup-days="10"'
+
                     m3u8_data += ',{name}\n{stream}\n\n'.format(**channel)
 
             fdesc.write(m3u8_data.encode('utf-8'))
@@ -158,10 +165,17 @@ class IptvSimple:
                     if not item.get('available', True):
                         title = '[COLOR red]x[/COLOR] ' + title
 
-                    program = '<programme start="{start}" stop="{stop}" channel="{channel}">\n'.format(
-                        start=start,
-                        stop=stop,
-                        channel=cls._xml_encode(key))
+                    if item.get('stream'):
+                        program = '<programme start="{start}" stop="{stop}" channel="{channel}" catchup-id="{stream}">\n'.format(
+                            start=start,
+                            stop=stop,
+                            channel=cls._xml_encode(key),
+                            stream=cls._xml_encode(item.get('stream')))
+                    else:
+                        program = '<programme start="{start}" stop="{stop}" channel="{channel}">\n'.format(
+                            start=start,
+                            stop=stop,
+                            channel=cls._xml_encode(key))
 
                     program += ' <title>{title}</title>\n'.format(
                         title=cls._xml_encode(title))
