@@ -14,7 +14,7 @@
         <menu id="kodi.core.main">
             <item library="context.py">
                 <label>30600</label>
-                <visible>Window.IsVisible(tvguide)|Window.IsVisible(tvsearch)</visible>
+                <visible>String.StartsWith(System.BuildVersion,18) + Window.IsVisible(tvguide) | Window.IsVisible(tvsearch)</visible>
             </item>
         </menu>
     </extension>

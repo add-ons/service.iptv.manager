@@ -33,6 +33,9 @@ class IptvSimple:
         try:
             # Install IPTV Simple
             kodiutils.execute_builtin('InstallAddon', IPTV_SIMPLE_ID)
+
+            # Activate IPTV Simple so we can get the addon to be able to configure it
+            cls._activate()
             addon = kodiutils.get_addon(IPTV_SIMPLE_ID)
         except Exception as exc:  # pylint: disable=broad-except
             _LOGGER.warning('Could not setup IPTV Simple: %s', str(exc))
@@ -43,18 +46,21 @@ class IptvSimple:
 
         # Configure IPTV Simple
         output_dir = kodiutils.addon_profile()
-        playlist_path = os.path.join(output_dir, IPTV_SIMPLE_PLAYLIST)
-        epg_path = os.path.join(output_dir, IPTV_SIMPLE_EPG)
-        logo_path = '/'
 
         addon.setSetting('m3uPathType', '0')  # Local path
-        addon.setSetting('m3uPath', playlist_path)
+        addon.setSetting('m3uPath', os.path.join(output_dir, IPTV_SIMPLE_PLAYLIST))
 
         addon.setSetting('epgPathType', '0')  # Local path
-        addon.setSetting('epgPath', epg_path)
+        addon.setSetting('epgPath', os.path.join(output_dir, IPTV_SIMPLE_EPG))
+        addon.setSetting('epgCache', 'true')
+        addon.setSetting('epgTimeShift', '0')
 
         addon.setSetting('logoPathType', '0')  # Local path
-        addon.setSetting('logoPath', logo_path)
+        addon.setSetting('logoPath', '/')
+
+        addon.setSetting('catchupEnabled', 'true')
+        addon.setSetting('allChannelsCatchupMode', '1')
+        addon.setSetting('catchupOnlyOnFinishedProgrammes', 'false')
 
         # Activate IPTV Simple
         cls._activate()
@@ -115,12 +121,8 @@ class IptvSimple:
                         m3u8_data += ' group-title="{group}"'.format(**channel)
                     if channel.get('radio'):
                         m3u8_data += ' radio="true"'
-
                     if channel.get('vod'):
-                        # This will change if https://github.com/kodi-pvr/pvr.iptvsimple/issues/393 gets implemented
-                        m3u8_data += ' catchup="default"'
-                        m3u8_data += ' catchup-source="{catchup-id}"'
-                        m3u8_data += ' catchup-days="10"'
+                        m3u8_data += ' catchup="vod"'
 
                     m3u8_data += ',{name}\n{stream}\n\n'.format(**channel)
 
@@ -162,20 +164,17 @@ class IptvSimple:
                     start = dateutil.parser.parse(item.get('start')).strftime('%Y%m%d%H%M%S %z')
                     stop = dateutil.parser.parse(item.get('stop')).strftime('%Y%m%d%H%M%S %z')
                     title = item.get('title')
-                    if not item.get('available', True):
-                        title = '[COLOR red]x[/COLOR] ' + title
 
-                    if item.get('stream'):
-                        program = '<programme start="{start}" stop="{stop}" channel="{channel}" catchup-id="{stream}">\n'.format(
-                            start=start,
-                            stop=stop,
-                            channel=cls._xml_encode(key),
-                            stream=cls._xml_encode(item.get('stream')))
-                    else:
-                        program = '<programme start="{start}" stop="{stop}" channel="{channel}">\n'.format(
-                            start=start,
-                            stop=stop,
-                            channel=cls._xml_encode(key))
+                    # Add an icon ourselves in Kodi 18
+                    if title and item.get('stream', True) and kodiutils.kodi_version_major() < 19:
+                        # Add [CR] to fix a bug that causes the [/B] to be visible
+                        title = title + ' [COLOR green][B]•[/B][/COLOR][CR]'
+
+                    program = '<programme start="{start}" stop="{stop}" channel="{channel}"{vod}>\n'.format(
+                        start=start,
+                        stop=stop,
+                        channel=cls._xml_encode(key),
+                        vod=' catchup-id="%s"' % cls._xml_encode(item.get('stream')) if item.get('stream') else '')
 
                     program += ' <title>{title}</title>\n'.format(
                         title=cls._xml_encode(title))
@@ -202,7 +201,7 @@ class IptvSimple:
 
                     program += '</programme>\n'
 
-                    fdesc.write(program.encode('utf8'))
+                    fdesc.write(program.encode('utf-8'))
 
             fdesc.write('</tv>\n'.encode('utf-8'))
 
@@ -215,6 +214,8 @@ class IptvSimple:
     @staticmethod
     def _xml_encode(value):
         """Quick and dirty encoding for XML values"""
+        if value is None:
+            return ''
         return value \
             .replace('&', '&amp;') \
             .replace('<', '&lt;') \
