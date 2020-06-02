@@ -166,7 +166,7 @@ class IptvSimple:
                     title = item.get('title')
 
                     # Add an icon ourselves in Kodi 18
-                    if title and item.get('stream', True) and kodiutils.kodi_version_major() < 19:
+                    if title and item.get('stream') and kodiutils.kodi_version_major() < 19:
                         # Add [CR] to fix a bug that causes the [/B] to be visible
                         title = title + ' [COLOR green][B]•[/B][/COLOR][CR]'
 
