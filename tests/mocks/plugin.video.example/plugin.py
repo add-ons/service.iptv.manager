@@ -91,6 +91,7 @@ class IPTVManager:
                     title='This is a show with an & ampersant.',
                     description='This is the description of the show € 4 + 4 > 6',
                     subtitle='Pilot episode',
+                    genre='Quiz',
                     episode='S01E01',
                     image='https://example.com/image.png',
                     date='1987-06-15',

@@ -54,7 +54,6 @@ msgid "The EPG data is not up to date. Do you want to refresh the EPG now?"
 msgstr "De EPG is niet up to date. Wil je deze nu vernieuwen?"
 
 
-
 ### SETTINGS
 msgctxt "#30800"
 msgid "Channels"
