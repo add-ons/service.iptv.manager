@@ -199,6 +199,10 @@ class IptvSimple:
                         program += ' <date>{date}</date>\n'.format(
                             date=cls._xml_encode(item.get('date')))
 
+                    if item.get('genre'):
+                        program += ' <category>{genre}</category>\n'.format(
+                            genre=cls._xml_encode(item.get('genre')))
+
                     program += '</programme>\n'
 
                     fdesc.write(program.encode('utf-8'))
