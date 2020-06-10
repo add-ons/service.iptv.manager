@@ -64,11 +64,15 @@ class ContextMenu:
     @classmethod
     def _play(cls, uri, program):
         """Play the selected program with the specified URI."""
+        format_params = {}
         if '{date}' in uri:
-            uri = uri.format(date=program.get('start').isoformat())
+            format_params.update({'date': program.get('start').isoformat()})
 
         if '{duration}' in uri:
-            uri = uri.format(date=program.get('duration').isoformat())
+            format_params.update({'duration': program.get('duration')})
+
+        if format_params:
+            uri = uri.format(**format_params)
 
         _LOGGER.debug('Executing "%s"', uri)
         kodiutils.execute_builtin('PlayMedia', uri)
