@@ -28,7 +28,7 @@ class ContextMenu:
     def get_direct_uri():
         """Retrieve a direct URI from the selected ListItem."""
         # We use a clever way / ugly hack (pick your choice) to hide the direct stream in Kodi 18.
-        # Title [COLOR green][B]•[/B][/COLOR][CR][COLOR vod="plugin://plugin.video.example/play/whatever"][/COLOR]
+        # Title [COLOR green]•[/COLOR][COLOR vod="plugin://plugin.video.example/play/whatever"][/COLOR]
         label = sys.listitem.getLabel()  # pylint: disable=no-member
         stream = re.search(r'\[COLOR vod="([^"]+)"\]', label)
         return stream.group(1) if stream else None
