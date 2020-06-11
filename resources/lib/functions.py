@@ -36,11 +36,18 @@ def refresh():
 
 
 def play_from_contextmenu():
-    """Play an item from the Context Menu"""
-    # Fetch selection from Kodi
-    program = ContextMenu.get_selection()
-    if program:
-        ContextMenu.play(program)
+    """Play an item from the Context Menu in Kodi 18"""
+    # Use the direct uri if we have any
+    stream = ContextMenu.get_direct_uri()
+    if stream:
+        kodiutils.execute_builtin('PlayMedia', stream)
+        return
+
+    # Construct an uri based on the timestamp of the selection
+    stream = ContextMenu.get_uri_by_timestamp()
+    if stream:
+        kodiutils.execute_builtin('PlayMedia', stream)
+        return
 
 
 def open_settings():

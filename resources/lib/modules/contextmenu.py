@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 import json
 import logging
 import os
+import re
 import sys
 import time
 from datetime import datetime, timedelta
@@ -23,10 +24,21 @@ class ContextMenu:
     def __init__(self):
         """Initialise the Context Menu Module"""
 
+    @staticmethod
+    def get_direct_uri():
+        """Retrieve a direct URI from the selected ListItem."""
+        # We use a clever way / ugly hack (pick your choice) to hide the direct stream in Kodi 18.
+        # Title [COLOR green][B]•[/B][/COLOR][CR][COLOR vod="plugin://plugin.video.example/play/whatever"][/COLOR]
+        label = sys.listitem.getLabel()  # pylint: disable=no-member
+        stream = re.search(r'\[COLOR vod="([^"]+)"\]', label)
+        return stream.group(1) if stream else None
+
     @classmethod
-    def play(cls, program):
-        """Play the selected program."""
-        _LOGGER.debug('Asked to play %s', program)
+    def get_uri_by_timestamp(cls):
+        """Generate an URI based on the timestamp."""
+        program = cls._get_selection()
+        if not program:
+            return None
 
         # Get a list of addons that can play the selected channel
         # We do the lookup based on Channel Name, since that's all we have
@@ -36,20 +48,19 @@ class ContextMenu:
             if kodiutils.yesno_dialog(message=kodiutils.localize(30713)):  # The EPG data is not up to date...
                 from resources.lib.modules.addon import Addon
                 Addon.refresh(True)
-            return
+            return None
 
         if not addons:
             # Channel was not found.
             _LOGGER.debug('No Add-on was found to play %s', program.get('channel'))
             kodiutils.notification(
                 message=kodiutils.localize(30710, channel=program.get('channel')))  # Could not find an Add-on...
-            return
+            return None
 
         if len(addons) == 1:
             # Channel has one Add-on. Play it directly.
             _LOGGER.debug('One Add-on was found to play %s: %s', program.get('channel'), addons)
-            cls._play(list(addons.values())[0], program)
-            return
+            return cls._format_uri(list(addons.values())[0], program)
 
         # Ask the user to pick an Add-on
         _LOGGER.debug('Multiple Add-on were found to play %s: %s', program.get('channel'), addons)
@@ -57,15 +68,16 @@ class ContextMenu:
         ret = kodiutils.select(heading=kodiutils.localize(30711), options=addons_list)  # Select an Add-on...
         if ret == -1:
             _LOGGER.debug('The selection to play an item from %s was canceled', program.get('channel'))
-            return
+            return None
 
-        cls._play(addons.get(addons_list[ret]), program)
+        return cls._format_uri(addons.get(addons_list[ret]), program)
 
     @classmethod
-    def _play(cls, uri, program):
+    def _format_uri(cls, uri, program):
         """Play the selected program with the specified URI."""
         format_params = {}
         if '{date}' in uri:
+            _LOGGER.warning('Using {date} is deprecated. Please use {start}.')
             format_params.update({'date': program.get('start').isoformat()})
 
         if '{start}' in uri:
@@ -81,13 +93,11 @@ class ContextMenu:
         if format_params:
             uri = uri.format(**format_params)
 
-        _LOGGER.debug('Executing "%s"', uri)
-        kodiutils.execute_builtin('PlayMedia', uri)
+        return uri
 
     @classmethod
-    def get_selection(cls):
+    def _get_selection(cls):
         """Retrieve information about the selected ListItem."""
-
         # The selected ListItem is available in sys.listitem, but there is not enough data that we can use to know what
         # exact item was selected. Therefore, we use xbmc.getInfoLabel(ListItem.xxx), that references the currently
         # selected ListItem. This is not always the same as the item where the Context Menu was opened on when the
