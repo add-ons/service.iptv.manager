@@ -167,10 +167,8 @@ class IptvSimple:
 
                     # Add an icon ourselves in Kodi 18
                     if title and item.get('stream') and kodiutils.kodi_version_major() < 19:
-                        # Add [CR] to fix a bug that causes the [/B] to be visible.
-                        # We also use a clever way to hide the stream in the label so
-                        # Kodi 18 can access the direct stream
-                        title = '%s [COLOR green][B]•[/B][/COLOR][CR][COLOR vod="%s"][/COLOR]' % (
+                        # We use a clever way to hide the direct URI in the label so Kodi 18 can access the it
+                        title = '%s [COLOR green]•[/COLOR][COLOR vod="%s"][/COLOR]' % (
                             title, item.get('stream')
                         )
 
