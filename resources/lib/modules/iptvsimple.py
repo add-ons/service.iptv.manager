@@ -171,7 +171,7 @@ class IptvSimple:
                         # We also use a clever way to hide the stream in the label so
                         # Kodi 18 can access the direct stream
                         title = '%s [COLOR green][B]•[/B][/COLOR][CR][COLOR vod="%s"][/COLOR]' % (
-                            cls._xml_encode(title), cls._xml_encode(item.get('stream'))
+                            title, item.get('stream')
                         )
 
                     program = '<programme start="{start}" stop="{stop}" channel="{channel}"{vod}>\n'.format(
