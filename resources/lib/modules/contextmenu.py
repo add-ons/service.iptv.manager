@@ -8,7 +8,7 @@ import logging
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from resources.lib import kodiutils
 
@@ -67,6 +67,13 @@ class ContextMenu:
         format_params = {}
         if '{date}' in uri:
             format_params.update({'date': program.get('start').isoformat()})
+
+        if '{start}' in uri:
+            format_params.update({'start': program.get('start').isoformat()})
+
+        if '{stop}' in uri:
+            stop = program.get('start') + timedelta(seconds=program.get('duration'))
+            format_params.update({'stop': stop.isoformat()})
 
         if '{duration}' in uri:
             format_params.update({'duration': program.get('duration')})
