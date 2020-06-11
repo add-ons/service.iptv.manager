@@ -16,6 +16,7 @@ doesn't require a backend like TVHeadend since it handles all the streams inside
 
 ## Features
 * Integrates Live TV Channels with EPG data in Kodi from supported IPTV Add-ons
+* Allows playback of past and future programs directly from the EPG
 
 ## Supported Add-ons
 * [VTM GO (plugin.video.vtm.go)](https://github.com/add-ons/plugin.video.vtm.go/)
