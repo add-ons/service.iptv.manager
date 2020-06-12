@@ -68,10 +68,10 @@ class IntegrationTest(unittest.TestCase):
         })
 
         # Get the current selected EPG item
-        program = ContextMenu.get_selection()
-        self.assertTrue(program)
-        self.assertEqual(program.get('duration'), 3600)
-        self.assertEqual(program.get('channel'), 'Channel 1')
+        selection = ContextMenu._get_selection()  # pylint: disable=protected-access
+        self.assertTrue(selection)
+        self.assertEqual(selection.get('duration'), 3600)
+        self.assertEqual(selection.get('channel'), 'Channel 1')
 
         # Make sure we can detect that playback has started
         if os.path.exists('/tmp/playback-started.txt'):
@@ -79,7 +79,8 @@ class IntegrationTest(unittest.TestCase):
 
         with patch('xbmcgui.Dialog.select', return_value=0):
             # Try to play it
-            ContextMenu.play(program)
+            from resources.lib.functions import play_from_contextmenu
+            play_from_contextmenu()
 
         # Check that something has played
         self.assertTrue(self._wait_for_file('/tmp/playback-started.txt'))
@@ -88,8 +89,8 @@ class IntegrationTest(unittest.TestCase):
         sys.listitem = ListItem(path='pvr://guide/0012/2020-05-24 12:00:00.epg')
 
         # Get the current selected EPG item, but the selected item is wrong.
-        program = ContextMenu.get_selection()
-        self.assertIsNone(program)
+        selection = ContextMenu._get_selection()  # pylint: disable=protected-access
+        self.assertIsNone(selection)
 
     @staticmethod
     def _wait_for_file(filename, timeout=10):

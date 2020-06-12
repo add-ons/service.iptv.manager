@@ -163,12 +163,14 @@ class IptvSimple:
                 for item in epg[key]:
                     start = dateutil.parser.parse(item.get('start')).strftime('%Y%m%d%H%M%S %z')
                     stop = dateutil.parser.parse(item.get('stop')).strftime('%Y%m%d%H%M%S %z')
-                    title = item.get('title')
+                    title = item.get('title', '')
 
                     # Add an icon ourselves in Kodi 18
-                    if title and item.get('stream') and kodiutils.kodi_version_major() < 19:
-                        # Add [CR] to fix a bug that causes the [/B] to be visible
-                        title = title + ' [COLOR green][B]•[/B][/COLOR][CR]'
+                    if kodiutils.kodi_version_major() < 19 and item.get('stream'):
+                        # We use a clever way to hide the direct URI in the label so Kodi 18 can access the it
+                        title = '%s [COLOR green]•[/COLOR][COLOR vod="%s"][/COLOR]' % (
+                            title, item.get('stream')
+                        )
 
                     program = '<programme start="{start}" stop="{stop}" channel="{channel}"{vod}>\n'.format(
                         start=start,

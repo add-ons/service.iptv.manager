@@ -51,7 +51,7 @@ class IPTVManager:
                 preset=1,
                 stream='plugin://plugin.video.example/play/1',
                 logo='https://example.com/channel1.png',
-                vod='plugin://plugin.video.example/play/airdate/{date}'
+                vod='plugin://plugin.video.example/play/airdate/{start}/{stop}/{duration}'
             ),
             dict(
                 id='channel2.com',
