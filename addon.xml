@@ -20,7 +20,9 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Integrate IPTV Channels from other Add-ons in the Kodi PVR</summary>
+        <summary lang="ru_RU">Интеграция IPTV каналов из других дополнений в Kodi PVR</summary>
         <description lang="en_GB">This add-on integrates IPTV Channels from other Add-ons in the Kodi PVR.</description>
+        <description lang="ru_RU">Это дополнение интегрирует IPTV каналы из других дополнений в Kodi PVR.</description>
         <platform>all</platform>
         <license>GPL-3.0</license>
         <news>First release!</news>
