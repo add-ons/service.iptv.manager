@@ -202,8 +202,13 @@ class IptvSimple:
                             date=cls._xml_encode(item.get('date')))
 
                     if item.get('genre'):
-                        program += ' <category>{genre}</category>\n'.format(
-                            genre=cls._xml_encode(item.get('genre')))
+                        if isinstance(item.get('genre'), list):
+                            for genre in item.get('genre'):
+                                program += ' <category>{genre}</category>\n'.format(
+                                    genre=cls._xml_encode(genre))
+                        else:
+                            program += ' <category>{genre}</category>\n'.format(
+                                genre=cls._xml_encode(item.get('genre')))
 
                     program += '</programme>\n'
 
