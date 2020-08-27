@@ -19,11 +19,12 @@ doesn't require a backend like TVHeadend since it handles all the streams inside
 * Allows playback of past and future programs directly from the EPG
 
 ## Supported Add-ons
-* [VTM GO (plugin.video.vtm.go)](https://github.com/add-ons/plugin.video.vtm.go/)
+* [Regio TV (plugin.video.regiotv)](https://github.com/add-ons/plugin.video.regiotv/)
+* [TV Vlaanderen (plugin.video.tvvlaanderen)](https://github.com/add-ons/plugin.video.tvvlaanderen/)
 * [VRT NU (plugin.video.vrt.nu)](https://github.com/add-ons/plugin.video.vrt.nu/)
 * [VRT Radio (plugin.audio.vrt.radio)](https://github.com/add-ons/plugin.audio.vrt.radio/)
-* [Regio TV (plugin.video.regiotv)](https://github.com/add-ons/plugin.video.regiotv/)
 * [VIER-VIJF-ZES (plugin.video.viervijfzes)](https://github.com/add-ons/plugin.video.viervijfzes/)
+* [VTM GO (plugin.video.vtm.go)](https://github.com/add-ons/plugin.video.vtm.go/)
 * [Yelo (plugin.video.yelo)](https://github.com/add-ons/plugin.video.yelo)
 
 Is your Add-on not listed above? Feel free to open a Pull Request to add it or let us know!
