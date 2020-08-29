@@ -4,7 +4,7 @@
         <import addon="xbmc.python" version="2.26.0"/>
         <import addon="script.module.dateutil" version="2.6.0"/>
         <import addon="pvr.iptvsimple" version="3.9.8"/>
-</requires>
+    </requires>
     <!-- This is needed to get an add-on icon -->
     <extension point="xbmc.python.script" library="default.py">
         <provides>executable</provides>
