@@ -1,15 +1,76 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<settings>
-    <category label="30800"> <!-- Sources -->
-        <setting id="last_refreshed" visible="false"/>
-        <setting label="30801" type="lsep"/> <!-- Refreshing -->
-        <setting label="30802" type="select" id="refresh_interval" default="24" values="1|2|3|4|6|12|24" /> <!-- Every x hour -->
-        <setting label="30803" type="action" action="RunScript(service.iptv.manager,refresh)"/> <!-- Force refresh now -->
+<?xml version="1.0" encoding="utf-8" ?>
+<settings version="1">
+  <section id="iptv.manager" label="IPTV Manager">
+    <category id="sources" label="30800">
+      <group id="refreshing" label="30801">
+        <setting id="last_refreshed" type="integer">
+          <level>0</level>
+          <default>0</default>
+          <control type="edit" format="integer"/>
+          <visible>false</visible>
+        </setting>
+        <setting id="refresh_interval" type="integer" label="30802">
+          <level>0</level>
+          <default>24</default> <!-- Every x hour -->
+          <control type="spinner" format="integer">
+            <popup>false</popup>
+          </control>
+          <constraints>
+            <options>
+              <option label="30901">1</option>
+              <option label="30902">2</option>
+              <option label="30903">3</option>
+              <option label="30904">4</option>
+              <option label="30906">6</option>
+              <option label="30912">12</option>
+              <option label="30924">24</option>
+            </options>
+          </constraints>
+        </setting>
+        <setting id="iptv_refresh" type="action" label="30803">
+          <level>0</level>
+          <default/>
+          <!-- Force refresh now -->
+          <control type="button" format="action">
+            <data>RunScript(service.iptv.manager,refresh)</data>
+          </control>
+        </setting>
+      </group>
     </category>
-    <category label="30820"> <!-- IPTV Simple -->
-        <setting label="30821" type="lsep"/> <!-- Configuration -->
-        <setting label="30822" type="action" option="close" action="RunScript(service.iptv.manager,setup-iptv-simple)"/> <!-- Configure IPTV Simple automatically -->
-        <setting label="30823" type="action" option="close" action="Addon.OpenSettings(pvr.iptvsimple)" enable="System.HasAddon(pvr.iptvsimple)"/> <!-- Open IPTV Simple settings -->
-        <setting label="30824" type="bool" id="iptv_simple_restart" default="true" enable="System.HasAddon(pvr.iptvsimple)"/> <!-- Automatically restart IPTV Simple -->
+    <category id="iptvsimple" label="30820">
+      <group id="configuration" label="30821">
+        <setting id="iptv_setup" type="action" label="30822">
+          <level>0</level>
+          <default/>
+          <constraints>
+            <close>true</close>
+          </constraints>
+          <!-- Configure IPTV Simple automatically -->
+          <control type="button" format="action">
+            <data>RunScript(service.iptv.manager,setup-iptv-simple)</data>
+          </control>
+        </setting>
+        <setting id="iptv_settings" type="action" label="30823">
+          <level>0</level>
+          <default/>
+          <!-- Open IPTV Simple settings -->
+          <control type="button" format="action">
+            <data>Addon.OpenSettings(pvr.iptvsimple)</data>
+            <close>true</close>
+          </control>
+          <!-- dependencies>
+            <dependency type="enable" setting="System.HasAddon(pvr.iptvsimple)"></dependency>
+          </dependencies -->
+        </setting>
+        <setting id="iptv_simple_restart" type="boolean" label="30824">
+          <level>0</level>
+          <default>true</default>
+          <control type="toggle"/>
+          <!-- dependencies>
+            <dependency type="enable" setting="System.HasAddon(pvr.iptvsimple)"></dependency>
+          </dependencies -->
+        </setting>
+      </group>
     </category>
+  </section>
 </settings>

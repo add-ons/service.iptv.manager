@@ -63,7 +63,7 @@ msgid "Refreshing"
 msgstr ""
 
 msgctxt "#30802"
-msgid "Refresh interval [I](in hours)[/I]"
+msgid "Refresh interval"
 msgstr ""
 
 msgctxt "#30803"
@@ -88,4 +88,32 @@ msgstr ""
 
 msgctxt "#30824"
 msgid "Automatically restart IPTV Simple to refresh the data"
+msgstr ""
+
+msgctxt "#30901"
+msgid "Every hour"
+msgstr ""
+
+msgctxt "#30902"
+msgid "Every 2 hours"
+msgstr ""
+
+msgctxt "#30903"
+msgid "Every 3 hours"
+msgstr ""
+
+msgctxt "#30904"
+msgid "Every 4 hours"
+msgstr ""
+
+msgctxt "#30906"
+msgid "Every 6 hours"
+msgstr ""
+
+msgctxt "#30912"
+msgid "Every 12 hours"
+msgstr ""
+
+msgctxt "#30924"
+msgid "Every day"
 msgstr ""

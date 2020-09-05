@@ -207,9 +207,13 @@ def get_setting_int(key, default=None):
     """Get an add-on setting as integer"""
     # ADDON.getSettingInt(key) doesn't work in Leia for settings without "number"
     try:
-        return int(get_setting(key, default))
-    except ValueError:  # Occurs when not an integer
-        return default
+        return ADDON.getSettingInt(key)
+    except (AttributeError, TypeError):  # On Krypton or older, or when not a float
+        value = get_setting(key, default)
+        try:
+            return int(value)
+        except ValueError:
+            return default
     except RuntimeError:  # Occurs when the add-on is disabled
         return default
 
