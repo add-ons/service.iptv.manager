@@ -1,12 +1,13 @@
 [MESSAGES CONTROL]
 disable=
     bad-option-value,
-    cyclic-import, # This shoud be fixed
+    cyclic-import,  # This should be fixed
     duplicate-code,
-    fixme,
-    import-outside-toplevel,
-    line-too-long,
+    fixme,  # Allow FIXMEs in code is a useful practice
+    import-outside-toplevel,  # Done on purpose to reduce overhead at startup
     old-style-class,
+    raise-missing-from,  # This does not work on Python 2.7, remove later
+    super-with-arguments,
     too-few-public-methods,
     too-many-arguments,
     too-many-branches,
@@ -15,3 +16,4 @@ disable=
     too-many-locals,
     too-many-public-methods,
     too-many-return-statements,
+max-line-length=160
