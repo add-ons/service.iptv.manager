@@ -1,12 +1,18 @@
 export PYTHONPATH := $(CURDIR):$(CURDIR)/tests
 PYTHON := python
+KODI_PYTHON_ABIS := 3.0.0 2.26.0
 
-# Collect information to build as sensible package name
 name = $(shell xmllint --xpath 'string(/addon/@id)' addon.xml)
 version = $(shell xmllint --xpath 'string(/addon/@version)' addon.xml)
 git_branch = $(shell git rev-parse --abbrev-ref HEAD)
 git_hash = $(shell git rev-parse --short HEAD)
-zip_name = $(name)-$(version)-$(git_branch)-$(git_hash).zip
+
+ifdef release
+	zip_name = $(name)-$(version).zip
+else
+	zip_name = $(name)-$(version)-$(git_branch)-$(git_hash).zip
+endif
+
 include_files = addon.xml context.py default.py LICENSE README.md resources/ service.py
 include_paths = $(patsubst %,$(name)/%,$(include_files))
 exclude_files = \*.new \*.orig \*.pyc \*.pyo
@@ -57,6 +63,15 @@ build: clean
 	@rm -f ../$(zip_name)
 	cd ..; zip -r $(zip_name) $(include_paths) -x $(exclude_files)
 	@echo "Successfully wrote package as: ../$(zip_name)"
+
+multizip: clean
+	@-$(foreach abi,$(KODI_PYTHON_ABIS), \
+		echo "cd /addon/requires/import[@addon='xbmc.python']/@version\nset $(abi)\nsave\nbye" | xmllint --shell addon.xml; \
+		matrix=$(findstring $(abi), $(word 1,$(KODI_PYTHON_ABIS))); \
+		if [ $$matrix ]; then version=$(version)+matrix.1; else version=$(version); fi; \
+		echo "cd /addon/@version\nset $$version\nsave\nbye" | xmllint --shell addon.xml; \
+		make build; \
+	)
 
 release: build
 	rm -rf ../repo-scripts/$(name)/*
