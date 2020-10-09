@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.2.0](https://github.com/add-ons/service.iptv.manager/tree/v0.2.0) (2020-10-09)
+
+[Full Changelog](https://github.com/add-ons/service.iptv.manager/compare/v0.1.0...v0.2.0)
+
+**Implemented enhancements:**
+
+- Support more than one genre for an episode [\#39](https://github.com/add-ons/service.iptv.manager/pull/39) ([dagwieers](https://github.com/dagwieers))
+
+**Merged pull requests:**
+
+- Fix pylint issues on Python 3 [\#46](https://github.com/add-ons/service.iptv.manager/pull/46) ([dagwieers](https://github.com/dagwieers))
+- Add dependency to 'PVR IPTV Simple Client' [\#42](https://github.com/add-ons/service.iptv.manager/pull/42) ([piejanssens](https://github.com/piejanssens))
+- Add russian translation [\#37](https://github.com/add-ons/service.iptv.manager/pull/37) ([vlmaksime](https://github.com/vlmaksime))
+
 ## [v0.1.0](https://github.com/add-ons/service.iptv.manager/tree/v0.1.0) (2020-06-19)
 
 [Full Changelog](https://github.com/add-ons/service.iptv.manager/compare/763657b57145c1e28a3b52923488ce427b1694ca...v0.1.0)
