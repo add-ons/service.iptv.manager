@@ -59,5 +59,5 @@ build: clean
 	@echo "Successfully wrote package as: ../$(zip_name)"
 
 release: build
-	rm -rf ../repo-plugins/$(name)/*
-	unzip ../$(zip_name) -d ../repo-plugins/
+	rm -rf ../repo-scripts/$(name)/*
+	unzip ../$(zip_name) -d ../repo-scripts/
