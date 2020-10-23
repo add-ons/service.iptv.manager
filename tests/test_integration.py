@@ -12,10 +12,7 @@ from xml.etree import ElementTree as etree
 
 from mock import patch
 
-import xbmc
-
 from resources.lib.modules.addon import Addon
-from resources.lib.modules.contextmenu import ContextMenu
 from tests.xbmc import to_unicode
 from tests.xbmcgui import ListItem
 
@@ -56,41 +53,19 @@ class IntegrationTest(unittest.TestCase):
 
         # Now, try playing something from the Guide
         import sys
-        sys.listitem = ListItem(path='pvr://guide/0006/2020-05-23 11:35:00.epg')
-        xbmc.INFO_LABELS.update({
-            'ListItem.ChannelName': 'Channel 1',
-            'ListItem.ChannelNumberLabel': 9,
-            'ListItem.Date': '22-05-2020 18:15',
-            'ListItem.EndTime': '19:15',
-            'ListItem.Duration': '01:00:00',
-            'ListItem.Title': 'Example Show',
-            'ListItem.FolderPath': 'pvr://guide/0006/2020-05-23 11:35:00.epg',
-        })
-
-        # Get the current selected EPG item
-        selection = ContextMenu._get_selection()  # pylint: disable=protected-access
-        self.assertTrue(selection)
-        self.assertEqual(selection.get('duration'), 3600)
-        self.assertEqual(selection.get('channel'), 'Channel 1')
+        sys.listitem = ListItem(label='Example Show [COLOR green]•[/COLOR][COLOR vod="plugin://plugin.video.example/play/something"][/COLOR]',
+                                path='pvr://guide/0006/2020-05-23 11:35:00.epg')
 
         # Make sure we can detect that playback has started
         if os.path.exists('/tmp/playback-started.txt'):
             os.unlink('/tmp/playback-started.txt')
 
-        with patch('xbmcgui.Dialog.select', return_value=0):
-            # Try to play it
-            from resources.lib.functions import play_from_contextmenu
-            play_from_contextmenu()
+        # Try to play it
+        from resources.lib.functions import play_from_contextmenu
+        play_from_contextmenu()
 
         # Check that something has played
         self.assertTrue(self._wait_for_file('/tmp/playback-started.txt'))
-
-        # Now, try playing something from the Guide but we moved our mouse...
-        sys.listitem = ListItem(path='pvr://guide/0012/2020-05-24 12:00:00.epg')
-
-        # Get the current selected EPG item, but the selected item is wrong.
-        selection = ContextMenu._get_selection()  # pylint: disable=protected-access
-        self.assertIsNone(selection)
 
     @staticmethod
     def _wait_for_file(filename, timeout=10):
