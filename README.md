@@ -11,8 +11,7 @@ XMLTV file that the Kodi PVR Addon [IPTV Simple](https://github.com/kodi-pvr/pvr
 doesn't require a backend like TVHeadend since it handles all the streams inside Kodi. This is also the only way 
 (that we know of) to play DRM protected streams with the Kodi TV integration.
 
-> **Note:** IPTV Manager is still under development, and things might still change. The goal is to create an Add-on that
-> can be included in the Kodi Add-on Repository, so we need to find a way that works best.
+> **Note:** IPTV Manager is still under development, and things might still change.
 
 ## Features
 * Integrates Live TV Channels with EPG data in Kodi from supported IPTV Add-ons
