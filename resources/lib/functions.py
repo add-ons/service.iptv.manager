@@ -38,9 +38,12 @@ def refresh():
 def play_from_contextmenu():
     """Play an item from the Context Menu in Kodi 18"""
     stream = ContextMenu.get_direct_uri()
-    if stream:
-        _LOGGER.debug('Playing using direct URI: %s', stream)
-        kodiutils.execute_builtin('PlayMedia', stream)
+    if stream is None:
+        kodiutils.ok_dialog(message=kodiutils.localize(30706))
+        return
+
+    _LOGGER.debug('Playing using direct URI: %s', stream)
+    kodiutils.execute_builtin('PlayMedia', stream)
 
 
 def open_settings():

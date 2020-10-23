@@ -37,6 +37,10 @@ msgctxt "#30705"
 msgid "Updating channels and guide..."
 msgstr "Updaten van de kanalenlijst en de gids..."
 
+msgctxt "#30706"
+msgid "This program isn't available to play."
+msgstr "Dit programma is niet beschikbaar om af te spelen."
+
 
 ### SETTINGS
 msgctxt "#30800"
