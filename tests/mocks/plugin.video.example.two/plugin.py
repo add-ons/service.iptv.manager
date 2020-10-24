@@ -46,8 +46,7 @@ class IPTVManager:
                 name='Channel 1',
                 preset=1,
                 stream='plugin://plugin.video.example.two/play/1',
-                logo='https://example.com/channel1.png',
-                vod='plugin://plugin.video.example.two/play/airdate/{date}'
+                logo='https://example.com/channel1.png'
             ),
         ]
         return dict(version=1, streams=streams)
@@ -78,7 +77,7 @@ if __name__ == "__main__":
         IPTVManager(int(query['port'])).send_epg()
         exit()
 
-    if route.startswith('/play/airdate'):
+    if route.startswith('/play'):
         _LOGGER.info('Starting playback of program with route %s and query %s', route, query)
 
         # Touch a file so we can detect that we ended up here correctly

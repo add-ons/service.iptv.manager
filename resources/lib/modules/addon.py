@@ -10,7 +10,6 @@ import socket
 import time
 
 from resources.lib import kodiutils
-from resources.lib.modules.contextmenu import ContextMenu
 from resources.lib.modules.iptvsimple import IptvSimple
 
 _LOGGER = logging.getLogger(__name__)
@@ -86,8 +85,6 @@ class Addon:
         # Write files
         if show_progress:
             progress.update(100, kodiutils.localize(30705))  # Updating channels and guide...
-
-        ContextMenu.write_channels(channels)
 
         IptvSimple.write_playlist(channels)
         IptvSimple.write_epg(epg)

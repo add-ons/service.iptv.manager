@@ -29,7 +29,7 @@ check-tox:
 check-translations:
 	@echo ">>> Running translation checks"
 	@$(foreach lang,$(languages), \
-		msgcmp resources/language/resource.language.$(lang)/strings.po resources/language/resource.language.en_gb/strings.po; \
+		msgcmp --use-untranslated resources/language/resource.language.$(lang)/strings.po resources/language/resource.language.en_gb/strings.po; \
 	)
 	@#@tests/check_for_unused_translations.py
 

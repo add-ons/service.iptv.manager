@@ -51,7 +51,6 @@ class IPTVManager:
                 preset=1,
                 stream='plugin://plugin.video.example/play/1',
                 logo='https://example.com/channel1.png',
-                vod='plugin://plugin.video.example/play/airdate/{start}/{stop}/{duration}'
             ),
             dict(
                 id='channel2.com',
@@ -95,6 +94,7 @@ class IPTVManager:
                     episode='S01E01',
                     image='https://example.com/image.png',
                     date='1987-06-15',
+                    stream='plugin://plugin.video.example/play/something',
                 ),
                 dict(
                     start=(now + datetime.timedelta(seconds=1800)).isoformat(),
@@ -102,6 +102,7 @@ class IPTVManager:
                     title='This is a show 2 named "Show 2"',
                     description='This is the description of the show 2',
                     image=None,
+                    stream='plugin://plugin.video.example/play/something',
                 )
             ],
             'channel2.com': [
@@ -111,6 +112,7 @@ class IPTVManager:
                     title='This is a show 3',
                     description='This is the description of the show 3',
                     image=None,
+                    stream='plugin://plugin.video.example/play/something',
                 ),
                 dict(
                     start=(now + datetime.timedelta(seconds=1800)).isoformat(),
@@ -118,6 +120,7 @@ class IPTVManager:
                     title='This is a show 4',
                     description='This is the description of the show 4',
                     image=None,
+                    stream='plugin://plugin.video.example/play/something',
                 )
             ],
             'één.be': [
@@ -130,6 +133,7 @@ class IPTVManager:
                     episode='S01E01',
                     image='https://example.com/image.png',
                     date='1987-06-15',
+                    stream='plugin://plugin.video.example/play/something',
                 )
             ],
         }
@@ -155,7 +159,7 @@ if __name__ == "__main__":
         IPTVManager(int(query['port'])).send_epg()
         exit()
 
-    if route.startswith('/play/airdate'):
+    if route.startswith('/play'):
         _LOGGER.info('Starting playback of program with route %s and query %s', route, query)
 
         # Touch a file so we can detect that we ended up here correctly
