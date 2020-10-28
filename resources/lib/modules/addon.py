@@ -110,7 +110,7 @@ class Addon:
                                    params={'installed': True, 'enabled': True, 'type': 'xbmc.python.pluginsource'})
 
         addons = []
-        for row in result['result']['addons']:
+        for row in result['result'].get('addons', []):
             addon = kodiutils.get_addon(row['addonid'])
 
             # Check if add-on supports IPTV Manager
