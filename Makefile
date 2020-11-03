@@ -64,6 +64,22 @@ build: clean
 	cd ..; zip -r $(zip_name) $(include_paths) -x $(exclude_files)
 	@echo "Successfully wrote package as: ../$(zip_name)"
 
+release:
+ifneq ($(release),)
+	@github_changelog_generator -u add-ons -p service.iptv.manager --no-issues --future-release v$(release);
+
+	@echo "cd /addon/@version\nset $$release\nsave\nbye" | xmllint --shell addon.xml; \
+#	date=$(shell date '+%Y-%m-%d'); \
+#	echo "cd /addon/extension[@point='xbmc.addon.metadata']/news\nset v$$release ($$date)\nsave\nbye" | xmllint --shell addon.xml; \
+
+	# Next steps to release:
+	# - Modify the news-section of addons.xml
+	# - git add . && git commit -m "Prepare for v$(release)" && git push
+	# - git tag v$(release) && git push --tags
+else
+	@echo "Usage: make release release=1.0.0"
+endif
+
 multizip: clean
 	@-$(foreach abi,$(KODI_PYTHON_ABIS), \
 		echo "cd /addon/requires/import[@addon='xbmc.python']/@version\nset $(abi)\nsave\nbye" | xmllint --shell addon.xml; \
@@ -72,7 +88,3 @@ multizip: clean
 		echo "cd /addon/@version\nset $$version\nsave\nbye" | xmllint --shell addon.xml; \
 		make build; \
 	)
-
-release: build
-	rm -rf ../repo-scripts/$(name)/*
-	unzip ../$(zip_name) -d ../repo-scripts/
