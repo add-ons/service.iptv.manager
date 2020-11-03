@@ -1,5 +1,18 @@
 # Changelog
 
+## [v0.2.1](https://github.com/add-ons/service.iptv.manager/tree/v0.2.1) (2020-11-03)
+
+[Full Changelog](https://github.com/add-ons/service.iptv.manager/compare/v0.2.0...v0.2.1)
+
+**Fixed bugs:**
+
+- Don't throw an error when no addons are installed [\#51](https://github.com/add-ons/service.iptv.manager/pull/51) ([michaelarnauts](https://github.com/michaelarnauts))
+
+**Merged pull requests:**
+
+- Cleanup code by removing play by airdate [\#49](https://github.com/add-ons/service.iptv.manager/pull/49) ([michaelarnauts](https://github.com/michaelarnauts))
+- Add a release workflow [\#45](https://github.com/add-ons/service.iptv.manager/pull/45) ([dagwieers](https://github.com/dagwieers))
+
 ## [v0.2.0](https://github.com/add-ons/service.iptv.manager/tree/v0.2.0) (2020-10-09)
 
 [Full Changelog](https://github.com/add-ons/service.iptv.manager/compare/v0.1.0...v0.2.0)
