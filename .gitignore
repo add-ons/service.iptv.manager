@@ -1,25 +1,21 @@
-# Temporary files
 *.pyc
 *.pyo
 .DS*
-Thumbs.db
-*~
-.cache
-
-# Files related to development
 .pylint_rc
 /.idea
 /.project
 /.pydevproject
 /.settings
-/Pipfile
-/Pipfile.lock
-
-# Files related to testing
+Thumbs.db
+*~
+.cache
 .coverage
-.tox/
+coverage.xml
 
-# IPTV Manager output
-tests/userdata/playlist.m3u8
-tests/userdata/epg.xml
-tests/userdata/channels.json
+# Testing
+tests/home/userdata/addon_data/service.iptv.manager/playlist.m3u8
+tests/home/userdata/addon_data/service.iptv.manager/epg.xml
+.env
+
+Pipfile
+Pipfile.lock

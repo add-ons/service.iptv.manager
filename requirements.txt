@@ -1,7 +1,10 @@
-coverage
 lxml
 polib
 pylint
+pytest
+pytest-cov
+pytest-timeout
 python-dateutil
-tox
 mock
+#sakee
+git+git://github.com/michaelarnauts/kodi.emulator.ascii.git@jsonrpc-addons#egg=sakee

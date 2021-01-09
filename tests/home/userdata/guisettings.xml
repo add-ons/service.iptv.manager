@@ -1,0 +1,3 @@
+<settings version="2">
+    <setting id="videolibrary.showallitems" default="true">true</setting>
+</settings>

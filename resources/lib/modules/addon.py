@@ -24,6 +24,7 @@ def update_qs(url, **params):
         from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
     except ImportError:  # Python 2
         from urllib import urlencode
+
         from urlparse import parse_qsl, urlparse, urlunparse
     url_parts = list(urlparse(url))
     query = dict(parse_qsl(url_parts[4]))
