@@ -6,15 +6,16 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
+import tempfile
 import time
 import unittest
 from xml.etree import ElementTree as etree
 
 from mock import patch
+from xbmcgui import ListItem
 
+from resources.lib import kodiutils
 from resources.lib.modules.addon import Addon
-from tests.xbmc import to_unicode
-from tests.xbmcgui import ListItem
 
 
 class IntegrationTest(unittest.TestCase):
@@ -22,8 +23,8 @@ class IntegrationTest(unittest.TestCase):
 
     def test_refresh(self):
         """Test the refreshing of data"""
-        m3u_path = 'tests/userdata/playlist.m3u8'
-        epg_path = 'tests/userdata/epg.xml'
+        m3u_path = 'tests/home/userdata/addon_data/service.iptv.manager/playlist.m3u8'
+        epg_path = 'tests/home/userdata/addon_data/service.iptv.manager/epg.xml'
 
         # Remove existing files
         for path in [m3u_path, epg_path]:
@@ -39,8 +40,8 @@ class IntegrationTest(unittest.TestCase):
             self.assertTrue(os.path.exists(path), '%s does not exist' % path)
 
         # Validate playlist
-        with open(m3u_path, 'r') as fdesc:
-            data = to_unicode(fdesc.read())
+        with open(m3u_path, 'rb') as fdesc:
+            data = kodiutils.to_unicode(fdesc.read())
             self.assertTrue('#EXTM3U' in data)
             self.assertTrue('channel1.com' in data)
             self.assertTrue('radio1.com' in data)
@@ -57,15 +58,16 @@ class IntegrationTest(unittest.TestCase):
                                 path='pvr://guide/0006/2020-05-23 11:35:00.epg')
 
         # Make sure we can detect that playback has started
-        if os.path.exists('/tmp/playback-started.txt'):
-            os.unlink('/tmp/playback-started.txt')
+        playback_started = os.path.join(tempfile.gettempdir(), 'playback-started.txt')
+        if os.path.exists(playback_started):
+            os.remove(playback_started)
 
         # Try to play it
         from resources.lib.functions import play_from_contextmenu
         play_from_contextmenu()
 
         # Check that something has played
-        self.assertTrue(self._wait_for_file('/tmp/playback-started.txt'))
+        self.assertTrue(self._wait_for_file(playback_started))
 
     @staticmethod
     def _wait_for_file(filename, timeout=10):

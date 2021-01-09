@@ -1,7 +1,9 @@
-export PYTHONPATH := $(CURDIR):$(CURDIR)/tests
+export KODI_HOME := $(CURDIR)/tests/home
+export KODI_INTERACTIVE := 0
 PYTHON := python
 KODI_PYTHON_ABIS := 3.0.0 2.26.0
 
+# Collect information to build as sensible package name
 name = $(shell xmllint --xpath 'string(/addon/@id)' addon.xml)
 version = $(shell xmllint --xpath 'string(/addon/@version)' addon.xml)
 git_branch = $(shell git rev-parse --abbrev-ref HEAD)
@@ -22,22 +24,18 @@ languages = $(filter-out en_gb, $(patsubst resources/language/resource.language.
 all: check test build
 zip: build
 
-check: check-pylint check-tox check-translations
+check: check-pylint check-translations
 
 check-pylint:
 	@echo ">>> Running pylint checks"
 	@$(PYTHON) -m pylint *.py resources/lib/ tests/
-
-check-tox:
-	@echo ">>> Running tox checks"
-	@$(PYTHON) -m tox -q
 
 check-translations:
 	@echo ">>> Running translation checks"
 	@$(foreach lang,$(languages), \
 		msgcmp --use-untranslated resources/language/resource.language.$(lang)/strings.po resources/language/resource.language.en_gb/strings.po; \
 	)
-	@#@tests/check_for_unused_translations.py
+	@tests/check_for_unused_translations.py
 
 check-addon: clean build
 	@echo ">>> Running addon checks"
@@ -46,16 +44,19 @@ check-addon: clean build
 	cd ${TMPDIR} && kodi-addon-checker --branch=leia
 	@rm -rf ${TMPDIR}
 
+codefix:
+	@isort -l 160 resources/
+
 test: test-unit
 
 test-unit:
 	@echo ">>> Running unit tests"
-	@$(PYTHON) -m unittest discover -v -b -f
+	@$(PYTHON) -m pytest tests
 
 clean:
 	@find . -name '*.py[cod]' -type f -delete
 	@find . -name '__pycache__' -type d -delete
-	@rm -rf .pytest_cache/ .tox/ tests/cdm tests/userdata/temp
+	@rm -rf .pytest_cache/ tests/cdm tests/userdata/temp
 	@rm -f *.log .coverage
 
 build: clean
@@ -69,8 +70,8 @@ ifneq ($(release),)
 	@github_changelog_generator -u add-ons -p service.iptv.manager --no-issues --future-release v$(release);
 
 	@echo "cd /addon/@version\nset $$release\nsave\nbye" | xmllint --shell addon.xml; \
-#	date=$(shell date '+%Y-%m-%d'); \
-#	echo "cd /addon/extension[@point='xbmc.addon.metadata']/news\nset v$$release ($$date)\nsave\nbye" | xmllint --shell addon.xml; \
+	date=$(shell date '+%Y-%m-%d'); \
+	echo "cd /addon/extension[@point='xbmc.addon.metadata']/news\nset v$$release ($$date)\nsave\nbye" | xmllint --shell addon.xml; \
 
 	# Next steps to release:
 	# - Modify the news-section of addons.xml

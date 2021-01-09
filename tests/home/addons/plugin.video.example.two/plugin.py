@@ -3,7 +3,9 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
+import os
 import sys
+import tempfile
 
 try:  # Python 3
     from urllib.parse import parse_qsl, urlparse
@@ -81,7 +83,8 @@ if __name__ == "__main__":
         _LOGGER.info('Starting playback of program with route %s and query %s', route, query)
 
         # Touch a file so we can detect that we ended up here correctly
-        open('/tmp/playback-started.txt', 'a').close()
+        playback_started = os.path.join(tempfile.gettempdir(), 'playback-started.txt')
+        open(playback_started, 'a').close()
         exit()
 
     _LOGGER.error('Unknown route %s with query %s', route, query)
