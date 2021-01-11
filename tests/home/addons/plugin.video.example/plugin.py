@@ -12,9 +12,9 @@ import dateutil.parser
 import dateutil.tz
 
 try:  # Python 3
-    from urllib.parse import parse_qsl, urlparse
+    from urllib.parse import parse_qsl, urlparse, urlsplit
 except ImportError:  # Python 2
-    from urlparse import parse_qsl, urlparse
+    from urlparse import parse_qsl, urlparse, urlsplit
 
 logging.basicConfig(level=logging.DEBUG)
 _LOGGER = logging.getLogger()
@@ -148,20 +148,27 @@ if __name__ == "__main__":
         print('ERROR: Missing URL as first parameter')
         exit(1)
 
+    # Remove the first argument
+    sys.argv.pop(0)
+
     # Parse routing
-    url_parts = urlparse(sys.argv[1])
-    route = url_parts.path
-    query = dict(parse_qsl(url_parts.query))
+    path = urlsplit(sys.argv[0]).path or '/'
+    if len(sys.argv) > 2:
+        params = dict(parse_qsl(sys.argv[2].lstrip('?')))
+    else:
+        params = {}
 
-    if route == '/iptv/channels':
-        IPTVManager(int(query['port'])).send_channels()
+    print(params)
+
+    if path == '/iptv/channels':
+        IPTVManager(int(params['port'])).send_channels()
         exit()
 
-    if route == '/iptv/epg':
-        IPTVManager(int(query['port'])).send_epg()
+    if path == '/iptv/epg':
+        IPTVManager(int(params['port'])).send_epg()
         exit()
 
-    if route.startswith('/play'):
+    if path.startswith('/play'):
         _LOGGER.info('Starting playback of program with route %s and query %s', route, query)
 
         # Touch a file so we can detect that we ended up here correctly
@@ -169,5 +176,5 @@ if __name__ == "__main__":
         open(playback_started, 'a').close()
         exit()
 
-    _LOGGER.error('Unknown route %s with query %s', route, query)
+    _LOGGER.error('Unknown route %s with query %s', path, params)
     exit(1)
