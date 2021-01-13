@@ -11,6 +11,7 @@ import time
 import unittest
 from xml.etree import ElementTree as etree
 
+import xbmc
 from mock import patch
 from xbmcgui import ListItem
 
@@ -63,18 +64,19 @@ class IntegrationTest(unittest.TestCase):
             os.remove(playback_started)
 
         # Try to play it
-        #from resources.lib.functions import play_from_contextmenu
-        #play_from_contextmenu()
+        from resources.lib.functions import play_from_contextmenu
+        play_from_contextmenu()
 
-        # Check that something has played
-        #self.assertTrue(self._wait_for_file(playback_started))
+        # Check that something is playing
+        self.assertTrue(self._wait_for_playing())
 
-    @staticmethod
-    def _wait_for_file(filename, timeout=10):
+    def _wait_for_playing(filename, timeout=3):
         """Wait until a file appears on the filesystem."""
+        player = xbmc.Player()
         deadline = time.time() + timeout
         while time.time() < deadline:
-            if os.path.exists(filename):
+            if player.isPlaying():
+                player.stop()
                 return True
             time.sleep(.1)
         return False
