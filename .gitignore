@@ -13,8 +13,7 @@ Thumbs.db
 coverage.xml
 
 # Testing
-tests/home/userdata/addon_data/service.iptv.manager/playlist.m3u8
-tests/home/userdata/addon_data/service.iptv.manager/epg.xml
+tests/home/userdata/addon_data/service.iptv.manager
 .env
 
 Pipfile
