@@ -7,4 +7,4 @@ pytest-timeout
 python-dateutil
 mock
 #sakee
-git+git://github.com/michaelarnauts/kodi.emulator.ascii.git@jsonrpc-addons#egg=sakee
+git+git://github.com/retrospect-addon/kodi.emulator.ascii.git@master#egg=sakee
