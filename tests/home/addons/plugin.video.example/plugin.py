@@ -3,21 +3,19 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import datetime
-import logging
 import os
 import sys
 import tempfile
 
 import dateutil.parser
 import dateutil.tz
+import xbmc
+import xbmcplugin
 
 try:  # Python 3
-    from urllib.parse import parse_qsl, urlparse, urlsplit
+    from urllib.parse import parse_qsl, urlparse
 except ImportError:  # Python 2
-    from urlparse import parse_qsl, urlparse, urlsplit
-
-logging.basicConfig(level=logging.DEBUG)
-_LOGGER = logging.getLogger()
+    from urlparse import parse_qsl, urlparse
 
 
 class IPTVManager:
@@ -148,33 +146,28 @@ if __name__ == "__main__":
         print('ERROR: Missing URL as first parameter')
         exit(1)
 
-    # Remove the first argument
-    sys.argv.pop(0)
-
     # Parse routing
-    path = urlsplit(sys.argv[0]).path or '/'
+    url_parts = urlparse(sys.argv[0])
+    route = url_parts.path
     if len(sys.argv) > 2:
-        params = dict(parse_qsl(sys.argv[2].lstrip('?')))
+        query = dict(parse_qsl(sys.argv[2].lstrip('?')))
     else:
-        params = {}
+        query = {}
+    print('Invoked plugin.video.example with route %s and query %s' % (route, query))
 
-    print(params)
-
-    if path == '/iptv/channels':
-        IPTVManager(int(params['port'])).send_channels()
+    if route == '/iptv/channels':
+        IPTVManager(int(query['port'])).send_channels()
         exit()
 
-    if path == '/iptv/epg':
-        IPTVManager(int(params['port'])).send_epg()
+    elif route == '/iptv/epg':
+        IPTVManager(int(query['port'])).send_epg()
         exit()
 
-    if path.startswith('/play'):
-        _LOGGER.info('Starting playback of program with route %s and query %s', route, query)
-
-        # Touch a file so we can detect that we ended up here correctly
-        playback_started = os.path.join(tempfile.gettempdir(), 'playback-started.txt')
-        open(playback_started, 'a').close()
+    elif route.startswith('/play'):
+        listitem = xbmc.ListItem(label='Something', path='something.mp4')
+        xbmcplugin.setResolvedUrl(-1, True, listitem)
         exit()
 
-    _LOGGER.error('Unknown route %s with query %s', path, params)
+    # Unknown route
+    print('Unknown route %s' % route)
     exit(1)

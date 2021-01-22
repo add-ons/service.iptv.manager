@@ -6,11 +6,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
-import tempfile
 import time
 import unittest
 from xml.etree import ElementTree as etree
 
+import xbmc
 from mock import patch
 from xbmcgui import ListItem
 
@@ -57,24 +57,23 @@ class IntegrationTest(unittest.TestCase):
         sys.listitem = ListItem(label='Example Show [COLOR green]•[/COLOR][COLOR vod="plugin://plugin.video.example/play/something"][/COLOR]',
                                 path='pvr://guide/0006/2020-05-23 11:35:00.epg')
 
-        # Make sure we can detect that playback has started
-        playback_started = os.path.join(tempfile.gettempdir(), 'playback-started.txt')
-        if os.path.exists(playback_started):
-            os.remove(playback_started)
-
         # Try to play it
-        #from resources.lib.functions import play_from_contextmenu
-        #play_from_contextmenu()
+        from resources.lib.functions import play_from_contextmenu
+        play_from_contextmenu()
 
-        # Check that something has played
-        #self.assertTrue(self._wait_for_file(playback_started))
+        # Check that something is playing
+        player = xbmc.Player()
+        self.assertTrue(self._wait_for_playing(player, 'something.mp4'))
+
+        xbmc.executebuiltin('PlayerControl(Stop)')  # This is instant
+        self.assertFalse(player.isPlaying())
 
     @staticmethod
-    def _wait_for_file(filename, timeout=10):
+    def _wait_for_playing(player, filename, timeout=3):
         """Wait until a file appears on the filesystem."""
         deadline = time.time() + timeout
         while time.time() < deadline:
-            if os.path.exists(filename):
+            if player.isPlaying() and player.getPlayingFile() == filename:
                 return True
             time.sleep(.1)
         return False
