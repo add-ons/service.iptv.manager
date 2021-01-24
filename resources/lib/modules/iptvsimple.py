@@ -109,6 +109,13 @@ class IptvSimple:
 
             for addon in channels:
                 m3u8_data += '## {addon_name}\n'.format(**addon)
+
+                # RAW M3U8 data
+                if not isinstance(addon['channels'], list):
+                    m3u8_data += addon['channels']
+                    continue
+
+                # JSON-STREAMS format
                 for channel in addon['channels']:
                     m3u8_data += '#EXTINF:-1 tvg-name="{name}"'.format(**channel)
                     if channel.get('id'):
@@ -133,7 +140,7 @@ class IptvSimple:
         os.rename(playlist_path + '.tmp', playlist_path)
 
     @classmethod
-    def write_epg(cls, epg):
+    def write_epg(cls, epg_list):
         """Write EPG data"""
         output_dir = kodiutils.addon_profile()
 
@@ -152,15 +159,23 @@ class IptvSimple:
             fdesc.write('<!DOCTYPE tv SYSTEM "xmltv.dtd">\n'.encode('utf-8'))
             fdesc.write('<tv>\n'.encode('utf-8'))
 
-            # Write channel info
-            for _, key in enumerate(epg):
-                fdesc.write('<channel id="{key}"></channel>\n'.format(key=cls._xml_encode(key)).encode('utf-8'))
+            for epg in epg_list:
+                # RAW XMLTV data
+                if not isinstance(epg, dict):
+                    fdesc.write(epg.encode('utf-8'))
+                    fdesc.write('\n'.encode('utf-8'))
+                    continue
 
-            # Write program info
-            for _, key in enumerate(epg):
-                for item in epg[key]:
-                    program = cls._construct_epg_program_xml(item, key)
-                    fdesc.write(program.encode('utf-8'))
+                # JSON-EPG format
+                # Write channel info
+                for _, key in enumerate(epg):
+                    fdesc.write('<channel id="{key}"></channel>\n'.format(key=cls._xml_encode(key)).encode('utf-8'))
+
+                # Write program info
+                for _, key in enumerate(epg):
+                    for item in epg[key]:
+                        program = cls._construct_epg_program_xml(item, key)
+                        fdesc.write(program.encode('utf-8'))
 
             fdesc.write('</tv>\n'.encode('utf-8'))
 

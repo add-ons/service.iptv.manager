@@ -46,11 +46,13 @@ class IntegrationTest(unittest.TestCase):
             self.assertTrue('channel1.com' in data)
             self.assertTrue('radio1.com' in data)
             self.assertTrue('één.be' in data)
+            self.assertTrue('raw1.com' in data)
 
         # Validate EPG
         xml = etree.parse(epg_path)
         self.assertIsNotNone(xml.find('./channel[@id="channel1.com"]'))
         self.assertIsNotNone(xml.find('./channel[@id="één.be"]'))
+        self.assertIsNotNone(xml.find('./channel[@id="raw1.com"]'))
 
         # Now, try playing something from the Guide
         import sys

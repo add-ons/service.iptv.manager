@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 import json
 import logging
 import os
+import re
 import socket
 import time
 
@@ -49,7 +50,7 @@ class Addon:
     def refresh(cls, show_progress=False):
         """Update channels and EPG data"""
         channels = []
-        epg = dict()
+        epg = []
 
         if show_progress:
             progress = kodiutils.progress(message=kodiutils.localize(30703))  # Detecting IPTV add-ons...
@@ -77,7 +78,7 @@ class Addon:
                 return
 
             # Fetch EPG
-            epg.update(addon.get_epg())
+            epg.append(addon.get_epg())
 
             if progress and progress.iscanceled():
                 progress.close()
@@ -131,7 +132,7 @@ class Addon:
         """Get channel data from this add-on"""
         _LOGGER.info('Requesting channels from %s...', self.channels_uri)
         if not self.channels_uri:
-            return {}
+            return []
 
         try:
             data = self._get_data_from_addon(self.channels_uri)
@@ -140,6 +141,11 @@ class Addon:
             _LOGGER.error('Something went wrong while calling %s: %s', self.addon_id, exc)
             return []
 
+        # Return M3U8-format as-is without headers
+        if not isinstance(data, dict):
+            return data.replace('#EXTM3U\n', '')
+
+        # JSON-STREAMS format
         if data.get('version', 1) > CHANNELS_VERSION:
             _LOGGER.warning('Skipping %s since it uses an unsupported version: %d', self.channels_uri,
                             data.get('version'))
@@ -180,6 +186,15 @@ class Addon:
             _LOGGER.error('Something went wrong while calling %s: %s', self.addon_id, exc)
             return {}
 
+        # Return XMLTV-format as-is without headers and footers
+        if not isinstance(data, dict):
+            data = re.sub(r'^<\?xml.*?\?>', '', data, flags=re.DOTALL)  # Remove <?xml version="1.0" encoding="UTF-8"?>
+            data = re.sub(r'<!DOCTYPE.*?>', '', data, flags=re.DOTALL)  # <!DOCTYPE tv SYSTEM "xmltv.dtd">
+            data = re.sub(r'<tv>', '', data, flags=re.DOTALL)  # Remove <tv>
+            data = re.sub(r'</tv>', '', data, flags=re.DOTALL)  # Remove </tv>
+            return data.strip()
+
+        # JSON-EPG format
         if data.get('version', 1) > EPG_VERSION:
             _LOGGER.warning('Skipping EPG from %s since it uses an unsupported version: %d', self.epg_uri,
                             data.get('version'))

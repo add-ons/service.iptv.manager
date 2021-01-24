@@ -3,9 +3,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
-import os
 import sys
-import tempfile
 
 import xbmc
 import xbmcplugin
@@ -45,22 +43,24 @@ class IPTVManager:
     @via_socket
     def send_channels():  # pylint: disable=no-method-argument
         """Return JSON-STREAMS formatted information to IPTV Manager"""
-        streams = [
-            dict(
-                id='channel1.com',
-                name='Channel 1',
-                preset=1,
-                stream='plugin://plugin.video.example.two/play/1',
-                logo='https://example.com/channel1.png'
-            ),
-        ]
-        return dict(version=1, streams=streams)
+        channels = """#EXTM3U
+#EXTINF:-1 tvg-name="Test 1" tvg-id="raw1.com" tvg-logo="https://example.com/raw1.png" tvg-chno="1" group-title="Test Addon" catchup="vod",RAW 1
+plugin://plugin.video.test/play/raw"""
+        return channels
 
     @via_socket
     def send_epg():  # pylint: disable=no-method-argument
         """Return JSON-EPG formatted information to IPTV Manager"""
-        epg = {}
-        return dict(version=1, epg=epg)
+        epg = """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tv SYSTEM "xmltv.dtd">
+<tv>
+<channel id="raw1.com"></channel>
+<programme start="20210123114255 +0100" stop="20210123121255 +0100" channel="raw1.com" catchup-id="plugin://plugin.video.test/play/raw/1">
+ <title>RAW 1</title>
+ <desc>RAW 1 description</desc>
+</programme>
+</tv>"""
+        return epg
 
 
 if __name__ == "__main__":
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         query = dict(parse_qsl(sys.argv[2].lstrip('?')))
     else:
         query = {}
-    print('Invoked plugin.video.example.two with route %s and query %s' % (route, query))
+    print('Invoked plugin.video.example.three with route %s and query %s' % (route, query))
 
     if route == '/iptv/channels':
         IPTVManager(int(query['port'])).send_channels()
