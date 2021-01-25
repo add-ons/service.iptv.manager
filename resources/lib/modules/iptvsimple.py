@@ -174,8 +174,8 @@ class IptvSimple:
     def _construct_epg_program_xml(cls, item, channel):
         """ Generate the XML for the EPG of a program. """
         try:
-            start = dateutil.parser.parse(item.get('start')).strftime('%Y%m%d%H%M%S %z')
-            stop = dateutil.parser.parse(item.get('stop')).strftime('%Y%m%d%H%M%S %z')
+            start = dateutil.parser.parse(item.get('start')).strftime('%Y%m%d%H%M%S %z').rstrip()
+            stop = dateutil.parser.parse(item.get('stop')).strftime('%Y%m%d%H%M%S %z').rstrip()
             title = item.get('title', '')
 
             # Add an icon ourselves in Kodi 18
