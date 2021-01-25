@@ -88,8 +88,6 @@ package, which is a set of programs to generate and manipulate files
 conforming to this DTD.  Written by Ed Avis (ed@membled.com) and
 Gottfried Szing, thanks to others for suggestions.
 
-$Id: xmltv.dtd,v 1.47 2014/05/02 07:27:51 bilbo_uk Exp $
-
 -->
 
 <!-- The root element, tv.
