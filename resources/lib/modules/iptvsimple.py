@@ -121,8 +121,11 @@ class IptvSimple:
                         m3u8_data += ' group-title="{group}"'.format(**channel)
                     if channel.get('radio'):
                         m3u8_data += ' radio="true"'
-
-                    m3u8_data += ' catchup="vod",{name}\n{stream}\n\n'.format(**channel)
+                    m3u8_data += ' catchup="vod",{name}\n'.format(**channel)
+                    if channel.get('kodiprops'):
+                        for key, value in channel.get('kodiprops').items():
+                            m3u8_data += '#KODIPROP:{key}={value}\n'.format(key=key, value=value)
+                    m3u8_data += '{stream}\n\n'.format(**channel)
 
             fdesc.write(m3u8_data.encode('utf-8'))
 
