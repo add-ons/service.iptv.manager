@@ -51,7 +51,7 @@ class IPTVManager:
                 preset=1,
                 stream='plugin://plugin.video.example/play/1',
                 logo='https://example.com/channel1.png',
-                kodiprop={
+                kodiprops={
                     'inputstream': 'inputstream.ffmpegdirect',
                     'inputstream.ffmpegdirect.is_realtime_stream': 'true',
                 },
