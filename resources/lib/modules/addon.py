@@ -188,11 +188,7 @@ class Addon:
 
         # Return XMLTV-format as-is without headers and footers
         if not isinstance(data, dict):
-            data = re.sub(r'^<\?xml.*?\?>', '', data, flags=re.DOTALL)  # Remove <?xml version="1.0" encoding="UTF-8"?>
-            data = re.sub(r'<!DOCTYPE.*?>', '', data, flags=re.DOTALL)  # <!DOCTYPE tv SYSTEM "xmltv.dtd">
-            data = re.sub(r'<tv>', '', data, flags=re.DOTALL)  # Remove <tv>
-            data = re.sub(r'</tv>', '', data, flags=re.DOTALL)  # Remove </tv>
-            return data.strip()
+            return re.search(r'<tv>(.*)</tv>', data, flags=re.DOTALL).group(1).strip()
 
         # JSON-EPG format
         if data.get('version', 1) > EPG_VERSION:
