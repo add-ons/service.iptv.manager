@@ -54,6 +54,7 @@ class IPTVManager:
                 kodiprops={
                     'inputstream': 'inputstream.ffmpegdirect',
                     'inputstream.ffmpegdirect.is_realtime_stream': 'true',
+                    'mimetype': 'video/mp2t',
                 },
             ),
             dict(
