@@ -1,0 +1,5 @@
+<settings version="2">
+    <setting id="iptv.enabled">true</setting>
+    <setting id="iptv.channels_uri">plugin://plugin.video.example.three/iptv/channels</setting>
+    <setting id="iptv.epg_uri">plugin://plugin.video.example.three/iptv/epg</setting>
+</settings>
