@@ -53,7 +53,7 @@ plugin://plugin.video.test/play/raw"""
         """Return JSON-EPG formatted information to IPTV Manager"""
         epg = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE tv SYSTEM "xmltv.dtd">
-<tv>
+<tv source-info-url="http://www.schedulesdirect.org/" source-info-name="Schedules Direct" generator-info-name="XMLTV/$Id: tv_grab_na_dd.in,v 1.70 2008/03/03 15:21:41 rmeden Exp $" generator-info-url="http://www.xmltv.org/">
 <channel id="raw1.com"></channel>
 <programme start="20210123114255 +0100" stop="20210123121255 +0100" channel="raw1.com" catchup-id="plugin://plugin.video.test/play/raw/1">
  <title>RAW 1</title>

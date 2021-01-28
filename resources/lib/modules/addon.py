@@ -188,7 +188,7 @@ class Addon:
 
         # Return XMLTV-format as-is without headers and footers
         if not isinstance(data, dict):
-            return re.search(r'<tv>(.*)</tv>', data, flags=re.DOTALL).group(1).strip()
+            return re.search(r'<tv[^>]*>(.*)</tv>', data, flags=re.DOTALL).group(1).strip()
 
         # JSON-EPG format
         if data.get('version', 1) > EPG_VERSION:
