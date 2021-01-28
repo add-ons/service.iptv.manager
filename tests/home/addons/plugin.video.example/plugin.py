@@ -51,6 +51,11 @@ class IPTVManager:
                 preset=1,
                 stream='plugin://plugin.video.example/play/1',
                 logo='https://example.com/channel1.png',
+                kodiprops={
+                    'inputstream': 'inputstream.ffmpegdirect',
+                    'inputstream.ffmpegdirect.is_realtime_stream': 'true',
+                    'mimetype': 'video/mp2t',
+                },
             ),
             dict(
                 id='channel2.com',
@@ -81,6 +86,7 @@ class IPTVManager:
     def send_epg():  # pylint: disable=no-method-argument
         """Return JSON-EPG formatted information to IPTV Manager"""
         now = datetime.datetime.now(tz=dateutil.tz.gettz('CET'))
+        now_notz = datetime.datetime.now()
 
         epg = {
             'channel1.com': [
@@ -107,17 +113,17 @@ class IPTVManager:
             ],
             'channel2.com': [
                 dict(
-                    start=now.isoformat(),
-                    stop=(now + datetime.timedelta(seconds=1800)).isoformat(),
-                    title='This is a show 3',
+                    start=now_notz.isoformat(),
+                    stop=(now_notz + datetime.timedelta(seconds=1800)).isoformat(),
+                    title='This is a show 3 (no timezone info)',
                     description='This is the description of the show 3',
                     image=None,
                     stream='plugin://plugin.video.example/play/something',
                 ),
                 dict(
-                    start=(now + datetime.timedelta(seconds=1800)).isoformat(),
-                    stop=(now + datetime.timedelta(seconds=3600)).isoformat(),
-                    title='This is a show 4',
+                    start=(now_notz + datetime.timedelta(seconds=1800)).isoformat(),
+                    stop=(now_notz + datetime.timedelta(seconds=3600)).isoformat(),
+                    title='This is a show 4 (no timezone info)',
                     description='This is the description of the show 4',
                     image=None,
                     stream='plugin://plugin.video.example/play/something',

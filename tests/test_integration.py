@@ -47,6 +47,7 @@ class IntegrationTest(unittest.TestCase):
             self.assertTrue('radio1.com' in data)
             self.assertTrue('één.be' in data)
             self.assertTrue('raw1.com' in data)
+            self.assertTrue('#KODIPROP:inputstream=inputstream.ffmpegdirect' in data)
 
         # Validate EPG
         xml = etree.parse(epg_path)
