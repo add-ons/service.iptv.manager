@@ -143,7 +143,7 @@ class IptvSimple:
         os.rename(playlist_path + '.tmp', playlist_path)
 
     @classmethod
-    def write_epg(cls, epg_list):
+    def write_epg(cls, epg_list, channels):
         """Write EPG data"""
         output_dir = kodiutils.addon_profile()
 
@@ -162,17 +162,22 @@ class IptvSimple:
             fdesc.write('<!DOCTYPE tv SYSTEM "xmltv.dtd">\n'.encode('utf-8'))
             fdesc.write('<tv>\n'.encode('utf-8'))
 
+            # Write channel info
+            for addon in channels:
+                for channel in addon.get('channels'):
+                    if isinstance(channel, dict) and channel.get('id'):
+                        fdesc.write('<channel id="{id}">\n'.format(id=cls._xml_encode(channel.get('id'))).encode('utf-8'))
+                        fdesc.write(' <display-name>{name}</display-name>\n'.format(name=cls._xml_encode(channel.get('name'))).encode('utf-8'))
+                        if channel.get('logo'):
+                            fdesc.write(' <icon src="{logo}"/>\n'.format(logo=cls._xml_encode(channel.get('logo'))).encode('utf-8'))
+                        fdesc.write('</channel>\n'.encode('utf-8'))
+
             for epg in epg_list:
                 # RAW XMLTV data
                 if not isinstance(epg, dict):
                     fdesc.write(epg.encode('utf-8'))
                     fdesc.write('\n'.encode('utf-8'))
                     continue
-
-                # JSON-EPG format
-                # Write channel info
-                for _, key in enumerate(epg):
-                    fdesc.write('<channel id="{key}"></channel>\n'.format(key=cls._xml_encode(key)).encode('utf-8'))
 
                 # Write program info
                 for _, key in enumerate(epg):
@@ -212,34 +217,13 @@ class IptvSimple:
             program += ' <title>{title}</title>\n'.format(
                 title=cls._xml_encode(title))
 
-            if item.get('description'):
-                program += ' <desc>{description}</desc>\n'.format(
-                    description=cls._xml_encode(item.get('description')))
-
             if item.get('subtitle'):
                 program += ' <sub-title>{subtitle}</sub-title>\n'.format(
                     subtitle=cls._xml_encode(item.get('subtitle')))
 
-            if item.get('episode'):
-                program += ' <episode-num system="onscreen">{episode}</episode-num>\n'.format(
-                    episode=cls._xml_encode(item.get('episode')))
-
-            if item.get('image'):
-                program += ' <icon src="{image}"/>\n'.format(
-                    image=cls._xml_encode(item.get('image')))
-
-            if item.get('date'):
-                program += ' <date>{date}</date>\n'.format(
-                    date=cls._xml_encode(item.get('date')))
-
-            if item.get('genre'):
-                if isinstance(item.get('genre'), list):
-                    for genre in item.get('genre'):
-                        program += ' <category>{genre}</category>\n'.format(
-                            genre=cls._xml_encode(genre))
-                else:
-                    program += ' <category>{genre}</category>\n'.format(
-                        genre=cls._xml_encode(item.get('genre')))
+            if item.get('description'):
+                program += ' <desc>{description}</desc>\n'.format(
+                    description=cls._xml_encode(item.get('description')))
 
             if item.get('credits'):
                 program += ' <credits>\n'
@@ -282,6 +266,27 @@ class IptvSimple:
                         program += '  <actor>{name}</actor>\n'.format(name=cls._xml_encode(credit.get('name')))
 
                 program += ' </credits>\n'
+
+            if item.get('date'):
+                program += ' <date>{date}</date>\n'.format(
+                    date=cls._xml_encode(item.get('date')))
+
+            if item.get('genre'):
+                if isinstance(item.get('genre'), list):
+                    for genre in item.get('genre'):
+                        program += ' <category>{genre}</category>\n'.format(
+                            genre=cls._xml_encode(genre))
+                else:
+                    program += ' <category>{genre}</category>\n'.format(
+                        genre=cls._xml_encode(item.get('genre')))
+
+            if item.get('image'):
+                program += ' <icon src="{image}"/>\n'.format(
+                    image=cls._xml_encode(item.get('image')))
+
+            if item.get('episode'):
+                program += ' <episode-num system="onscreen">{episode}</episode-num>\n'.format(
+                    episode=cls._xml_encode(item.get('episode')))
 
             program += '</programme>\n'
             return program

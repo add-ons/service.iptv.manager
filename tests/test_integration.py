@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 import time
 import unittest
-from xml.etree import ElementTree as etree
+import lxml.etree
 
 import xbmc
 from mock import patch
@@ -50,7 +50,11 @@ class IntegrationTest(unittest.TestCase):
             self.assertTrue('#KODIPROP:inputstream=inputstream.ffmpegdirect' in data)
 
         # Validate EPG
-        xml = etree.parse(epg_path)
+        xml = lxml.etree.parse(epg_path)
+        validator = lxml.etree.DTD('tests/xmltv.dtd')
+        self.assertTrue(validator.validate(xml), msg=validator.error_log)
+
+        # Verify if it contains the info we expect.
         self.assertIsNotNone(xml.find('./channel[@id="channel1.com"]'))
         self.assertIsNotNone(xml.find('./channel[@id="één.be"]'))
         self.assertIsNotNone(xml.find('./channel[@id="raw1.com"]'))

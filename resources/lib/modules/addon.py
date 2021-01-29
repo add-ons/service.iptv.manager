@@ -89,7 +89,7 @@ class Addon:
             progress.update(100, kodiutils.localize(30705))  # Updating channels and guide...
 
         IptvSimple.write_playlist(channels)
-        IptvSimple.write_epg(epg)
+        IptvSimple.write_epg(epg, channels)
 
         if kodiutils.get_setting_bool('iptv_simple_restart'):
             if show_progress:
