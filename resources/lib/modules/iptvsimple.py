@@ -165,7 +165,7 @@ class IptvSimple:
             # Write channel info
             for addon in channels:
                 for channel in addon.get('channels'):
-                    if channel.get('id'):
+                    if isinstance(channel, dict) and channel.get('id'):
                         fdesc.write('<channel id="{id}">\n'.format(id=cls._xml_encode(channel.get('id'))).encode('utf-8'))
                         fdesc.write(' <display-name>{name}</display-name>\n'.format(name=cls._xml_encode(channel.get('name'))).encode('utf-8'))
                         if channel.get('logo'):
@@ -178,11 +178,6 @@ class IptvSimple:
                     fdesc.write(epg.encode('utf-8'))
                     fdesc.write('\n'.encode('utf-8'))
                     continue
-
-                # JSON-EPG format
-                # Write channel info
-                for _, key in enumerate(epg):
-                    fdesc.write('<channel id="{key}"></channel>\n'.format(key=cls._xml_encode(key)).encode('utf-8'))
 
                 # Write program info
                 for _, key in enumerate(epg):

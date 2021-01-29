@@ -3,8 +3,10 @@
 ===============================================================================
 NOTE: Modified for IPTV Manager.
 
-This file is modified to allow programme.catchup-id. This is a custom
-field that the Kodi Add-on Simple IPTV understands.
+* Allow programme.catchup-id. This is a custom field that the Kodi Add-on
+  Simple IPTV understands.
+* The order of channel and programme in the tv-tags are not strict anymore.
+  This is used when merging raw xmltv, so we don't need to split it up.
 ===============================================================================
 
 This is a DTD to represent a TV listing.  It doesn't explicitly group
@@ -122,7 +124,7 @@ To publicize your wonderful program which generated this file, you can
 use 'generator-info-name' (preferably in the form 'progname/version')
 and 'generator-info-url' (a link to more info about the program).
 -->
-<!ELEMENT tv (channel*, programme*)>
+<!ELEMENT tv (channel | programme)*>
 <!ATTLIST tv date   CDATA #IMPLIED
              source-info-url     CDATA #IMPLIED
              source-info-name    CDATA #IMPLIED

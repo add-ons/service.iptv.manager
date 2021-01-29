@@ -91,7 +91,7 @@ class IPTVManager:
                 dict(
                     start=now.isoformat(),
                     stop=(now + datetime.timedelta(seconds=1800)).isoformat(),
-                    title='This is a show with an & ampersant.',
+                    title='This is a show with an & ampersand.',
                     description='This is the description of the show € 4 + 4 > 6',
                     subtitle='Pilot episode',
                     genre='Quiz',
