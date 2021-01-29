@@ -3,9 +3,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import datetime
-import os
 import sys
-import tempfile
 
 import dateutil.parser
 import dateutil.tz
@@ -140,6 +138,30 @@ class IPTVManager:
                     image='https://example.com/image.png',
                     date='1987-06-15',
                     stream='plugin://plugin.video.example/play/something',
+                    credits=[
+                        {
+                            "type": "director",
+                            "name": "David Benioff"
+                        },
+                        {
+                            "type": "director",
+                            "name": "D.B. Weiss"
+                        },
+                        {
+                            "type": "actor",
+                            "name": "Kit Harington",
+                            "role": "Jon Snow"
+                        },
+                        {
+                            "type": "actor",
+                            "name": "Emilia Clarke",
+                            "role": "Daenerys Targaryen"
+                        },
+                        {
+                            "type": "writer",
+                            "name": "George R.R. Martin"
+                        },
+                    ]
                 )
             ],
         }
