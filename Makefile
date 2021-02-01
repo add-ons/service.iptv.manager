@@ -34,6 +34,12 @@ check-translations:
 	)
 	@tests/check_for_unused_translations.py
 
+update-translations:
+	@printf ">>> Updating languages\n"
+	@-$(foreach lang,$(languages), \
+		tests/update_translations.py resources/language/resource.language.$(lang)/strings.po resources/language/resource.language.en_gb/strings.po; \
+	)
+
 check-addon: clean build
 	@printf ">>> Running addon checks\n"
 	$(eval TMPDIR := $(shell mktemp -d))
