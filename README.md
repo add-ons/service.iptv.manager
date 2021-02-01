@@ -15,6 +15,7 @@ More information and documentation for developers can be found on our [Wiki page
 
 ## Features
 * Integrates Live TV Channels with EPG data in Kodi from supported IPTV Add-ons
+* Supports external sources so you can specify your own `M3U` and `XMLTV` files to merge from a file or a http(s)://-url
 * Allows playback of past and future programs directly from the EPG
 
 ## Screenshots

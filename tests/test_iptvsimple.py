@@ -15,7 +15,9 @@ class IptvSimpleTest(unittest.TestCase):
 
     def test_setup(self):
         """Test the setup of IPTV Simple (this will be mocked)"""
-        self.assertTrue(IptvSimple.setup())
+        self.assertFalse(IptvSimple.check())  # Configuration will be incorrect
+        self.assertTrue(IptvSimple.setup())  # Setup configuration
+        self.assertTrue(IptvSimple.check())  # Configuration will be correct
 
     def test_restart(self):
         """Test the restart of IPTV Simple (this will be mocked)"""

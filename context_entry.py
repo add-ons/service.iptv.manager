@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-from resources.lib.functions import run
+if __name__ == '__main__':
+    from resources.lib.addon import run
 
-run([-1, 'play_from_contextmenu'])
+    run(['/play'])

@@ -3,6 +3,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
+import os
 import sys
 
 import xbmc
@@ -43,22 +44,16 @@ class IPTVManager:
     @via_socket
     def send_channels():  # pylint: disable=no-method-argument
         """Return JSON-STREAMS formatted information to IPTV Manager"""
-        streams = [
-            dict(
-                id='channel1.com',
-                name='Channel 1',
-                preset=1,
-                stream='plugin://plugin.video.example.two/play/1',
-                logo='https://example.com/channel1.png'
-            ),
-        ]
-        return dict(version=1, streams=streams)
+        with open(os.path.dirname(__file__) + '/resources/raw_playlist.m3u', 'rb') as fdesc:
+            channels = fdesc.read()
+        return channels.decode()
 
     @via_socket
     def send_epg():  # pylint: disable=no-method-argument
         """Return JSON-EPG formatted information to IPTV Manager"""
-        epg = {}
-        return dict(version=1, epg=epg)
+        with open(os.path.dirname(__file__) + '/resources/raw_epg.xml', 'rb') as fdesc:
+            epg = fdesc.read()
+        return epg.decode()
 
 
 if __name__ == "__main__":
@@ -74,7 +69,7 @@ if __name__ == "__main__":
         query = dict(parse_qsl(sys.argv[2].lstrip('?')))
     else:
         query = {}
-    print('Invoked plugin.video.example.two with route %s and query %s' % (route, query))
+    print('Invoked plugin.video.example.raw with route %s and query %s' % (route, query))
 
     if route == '/iptv/channels':
         IPTVManager(int(query['port'])).send_channels()

@@ -6,4 +6,7 @@ pytest-cov
 pytest-timeout
 python-dateutil
 mock
+responses
+requests
+git+git://github.com/dagwieers/kodi-plugin-routing.git@setup#egg=routing
 sakee
