@@ -159,11 +159,10 @@ class Addon:
                 continue
 
             # Fix logo path to be absolute
-            if channel.get('logo'):
-                if not channel.get('logo').startswith(('http://', 'https://', 'special://', '/')):
-                    channel['logo'] = os.path.join(self.addon_path, channel.get('logo'))
-            else:
+            if not channel.get('logo'):
                 channel['logo'] = kodiutils.addon_icon(self.addon_obj)
+            elif not channel.get('logo').startswith(('http://', 'https://', 'special://', 'resource://', '/')):
+                channel['logo'] = os.path.join(self.addon_path, channel.get('logo'))
 
             # Add add-on name as group
             if not channel.get('group'):
