@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
+import sys
 import json
 import logging
 import os
@@ -164,9 +165,22 @@ class Addon:
             elif not channel.get('logo').startswith(('http://', 'https://', 'special://', 'resource://', '/')):
                 channel['logo'] = os.path.join(self.addon_path, channel.get('logo'))
 
-            # Add add-on name as group
+            # Ensure group is a set
             if not channel.get('group'):
-                channel['group'] = kodiutils.addon_name(self.addon_obj)
+                channel['group'] = set()
+            # Accept string values (backward compatible)
+            elif isinstance(channel.get('group'), (bytes, str)):
+                channel['group'] = set(channel.get('group').split(';'))
+            # Accept string values (backward compatible, py2 version)
+            elif sys.version_info.major == 2 and isinstance(channel.get('group'), unicode): # noqa: F821; pylint: disable=undefined-variable
+                channel['group'] = set(channel.get('group').split(';'))
+            elif isinstance(channel.get('group'), list):
+                channel['group'] = set(list(channel.get('group')))
+            else:
+                _LOGGER.warning('Channel group is not a list: %s', channel)
+                channel['group'] = set()
+            # Add add-on name as group, if not already
+            channel['group'].add(kodiutils.addon_name(self.addon_obj))
 
             channels.append(channel)
 

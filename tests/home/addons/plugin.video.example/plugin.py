@@ -68,6 +68,7 @@ class IPTVManager:
                 preset=901,
                 stream='plugin://plugin.video.example/play/901',
                 logo='https://example.com/radio1.png',
+                group='VRT',
                 radio=True,
             ),
             dict(
@@ -76,6 +77,7 @@ class IPTVManager:
                 preset=101,
                 stream='plugin://plugin.video.example/play/één',
                 logo='https://example.com/één.png',
+                group=['Belgium', 'VRT'],
             ),
         ]
         return dict(version=1, streams=streams)

@@ -125,7 +125,7 @@ class IptvSimple:
                     if channel.get('preset'):
                         m3u8_data += ' tvg-chno="{preset}"'.format(**channel)
                     if channel.get('group'):
-                        m3u8_data += ' group-title="{group}"'.format(**channel)
+                        m3u8_data += ' group-title="{groups}"'.format(groups=';'.join(channel.get('group')))
                     if channel.get('radio'):
                         m3u8_data += ' radio="true"'
                     m3u8_data += ' catchup="vod",{name}\n'.format(**channel)

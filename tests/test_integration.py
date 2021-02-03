@@ -6,10 +6,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
+import re
 import time
 import unittest
-import lxml.etree
 
+import lxml.etree
 import xbmc
 from mock import patch
 from xbmcgui import ListItem
@@ -48,6 +49,15 @@ class IntegrationTest(unittest.TestCase):
             self.assertTrue('één.be' in data)
             self.assertTrue('raw1.com' in data)
             self.assertTrue('#KODIPROP:inputstream=inputstream.ffmpegdirect' in data)
+
+            # Check groups
+            # self.assertRegex doesn't exists in Python 2.7, and self.assertRegexpMatches throws warnings in Python 3
+            self.assertTrue(re.search(r'#EXTINF:-1 .*?tvg-id="channel1.com".*?group-title="Example IPTV Addon"', data))
+            self.assertTrue(re.search(r'#EXTINF:-1 .*?tvg-id="één.be".*?group-title=".*?VRT.*?"', data))
+            self.assertTrue(re.search(r'#EXTINF:-1 .*?tvg-id="één.be".*?group-title=".*?Belgium.*?"', data))
+            self.assertTrue(re.search(r'#EXTINF:-1 .*?tvg-id="één.be".*?group-title=".*?Example IPTV Addon.*?"', data))
+            self.assertTrue(re.search(r'#EXTINF:-1 .*?tvg-id="radio1.com".*?group-title=".*?VRT.*?"', data))
+            self.assertTrue(re.search(r'#EXTINF:-1 .*?tvg-id="radio1.com".*?group-title=".*?Example IPTV Addon.*?"', data))
 
         # Validate EPG
         xml = lxml.etree.parse(epg_path)
