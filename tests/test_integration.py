@@ -9,6 +9,10 @@ import os
 import re
 import time
 import unittest
+import sys
+import time
+import unittest
+from uuid import uuid4
 
 import lxml.etree
 import xbmc
@@ -16,25 +20,38 @@ from mock import patch
 from xbmcgui import ListItem
 
 from resources.lib import kodiutils
-from resources.lib.modules.addon import Addon
+from resources.lib.modules.contextmenu import ContextMenu
+from resources.lib.modules.sources import Sources
+from resources.lib.modules.sources.external import ExternalSource
 
 
 class IntegrationTest(unittest.TestCase):
     """Integration Tests"""
 
     def test_refresh(self):
-        """Test the refreshing of data"""
+        """Test the refreshing of data."""
         m3u_path = 'tests/home/userdata/addon_data/service.iptv.manager/playlist.m3u8'
         epg_path = 'tests/home/userdata/addon_data/service.iptv.manager/epg.xml'
+        sources_path = 'tests/home/userdata/addon_data/service.iptv.manager/sources.json'
 
         # Remove existing files
-        for path in [m3u_path, epg_path]:
+        for path in [m3u_path, epg_path, sources_path]:
             if os.path.exists(path):
                 os.unlink(path)
 
+        # Add an external source
+        source = ExternalSource(uuid=str(uuid4()),
+                                name='External Source',
+                                enabled=True,
+                                playlist_type=ExternalSource.TYPE_FILE,
+                                playlist_uri=os.path.realpath('tests/data/external_playlist.m3u'),
+                                epg_type=ExternalSource.TYPE_FILE,
+                                epg_uri=os.path.realpath('tests/data/external_epg.xml'))
+        source.save()
+
         # Do the refresh
         with patch('xbmcgui.DialogProgress.iscanceled', return_value=False):
-            Addon.refresh(True)
+            Sources.refresh(True)
 
         # Check that the files now exist
         for path in [m3u_path, epg_path]:
@@ -45,9 +62,12 @@ class IntegrationTest(unittest.TestCase):
             data = kodiutils.to_unicode(fdesc.read())
             self.assertTrue('#EXTM3U' in data)
             self.assertTrue('channel1.com' in data)
+            self.assertTrue('channel2.com' in data)
             self.assertTrue('radio1.com' in data)
             self.assertTrue('één.be' in data)
             self.assertTrue('raw1.com' in data)
+            self.assertTrue('custom1.com' in data)
+            self.assertTrue('custom2.com' in data)
             self.assertTrue('#KODIPROP:inputstream=inputstream.ffmpegdirect' in data)
 
             # Check groups
@@ -66,17 +86,27 @@ class IntegrationTest(unittest.TestCase):
 
         # Verify if it contains the info we expect.
         self.assertIsNotNone(xml.find('./channel[@id="channel1.com"]'))
+        self.assertIsNotNone(xml.find('./channel[@id="channel2.com"]'))
+        self.assertIsNotNone(xml.find('./channel[@id="radio1.com"]'))
         self.assertIsNotNone(xml.find('./channel[@id="één.be"]'))
         self.assertIsNotNone(xml.find('./channel[@id="raw1.com"]'))
+        self.assertIsNotNone(xml.find('./channel[@id="custom1.com"]'))
+        self.assertIsNotNone(xml.find('./channel[@id="custom2.com"]'))
+        self.assertIsNotNone(xml.find('./programme[@channel="channel1.com"]'))
+        self.assertIsNotNone(xml.find('./programme[@channel="channel2.com"]'))
+        self.assertIsNone(xml.find('./programme[@channel="radio1.com"]'))  # No epg for this channel
+        self.assertIsNotNone(xml.find('./programme[@channel="één.be"]'))
+        self.assertIsNotNone(xml.find('./programme[@channel="raw1.com"]'))
+        self.assertIsNotNone(xml.find('./programme[@channel="custom1.com"]'))
+        self.assertIsNotNone(xml.find('./programme[@channel="custom2.com"]'))
 
-        # Now, try playing something from the Guide
-        import sys
+    def test_play_from_guide(self):
+        """Play something from the guide."""
         sys.listitem = ListItem(label='Example Show [COLOR green]•[/COLOR][COLOR vod="plugin://plugin.video.example/play/something"][/COLOR]',
                                 path='pvr://guide/0006/2020-05-23 11:35:00.epg')
 
         # Try to play it
-        from resources.lib.functions import play_from_contextmenu
-        play_from_contextmenu()
+        ContextMenu().play()
 
         # Check that something is playing
         player = xbmc.Player()

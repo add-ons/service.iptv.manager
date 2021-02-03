@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tv SYSTEM "xmltv.dtd">
+<tv>
+    <channel id="custom1.com">
+        <display-name>Custom 1</display-name>
+    </channel>
+    <channel id="custom2.com">
+        <display-name>Custom 2</display-name>
+    </channel>
+    <programme start="20210123114255 +0100" stop="20210123121255 +0100" channel="custom1.com">
+        <title>Custom 1 program</title>
+        <desc>Custom 1 description</desc>
+    </programme>
+    <programme start="20210123114255 +0100" stop="20210123121255 +0100" channel="custom2.com">
+        <title>Custom 1 program</title>
+        <desc>Custom 1 description</desc>
+    </programme>
+</tv>

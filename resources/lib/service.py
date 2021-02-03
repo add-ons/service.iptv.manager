@@ -9,8 +9,8 @@ import time
 from xbmc import Monitor
 
 from resources.lib import kodilogging, kodiutils
-from resources.lib.modules.addon import Addon
 from resources.lib.modules.iptvsimple import IptvSimple
+from resources.lib.modules.sources import Sources
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ class BackgroundService(Monitor):
         while not self.abortRequested():
             # Check if we need to do an update
             if self._is_refresh_required():
-                Addon.refresh()
+                Sources.refresh()
 
             # Check if IPTV Simple needs to be restarted
             if IptvSimple.restart_required:

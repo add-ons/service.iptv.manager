@@ -1,23 +1,18 @@
 # -*- coding: utf-8 -*-
-"""Addon Module"""
+"""Sources Module"""
 
 from __future__ import absolute_import, division, unicode_literals
 
-import sys
 import json
 import logging
 import os
-import re
 import socket
-import time
+import sys
 
 from resources.lib import kodiutils
-from resources.lib.modules.iptvsimple import IptvSimple
+from resources.lib.modules.sources import Source
 
 _LOGGER = logging.getLogger(__name__)
-
-CHANNELS_VERSION = 1
-EPG_VERSION = 1
 
 
 def update_qs(url, **params):
@@ -35,102 +30,68 @@ def update_qs(url, **params):
     return urlunparse(url_parts)
 
 
-class Addon:
-    """Helper class for Addon communication"""
+class AddonSource(Source):
+    """ Defines an Add-on source """
 
-    def __init__(self, addon_id, addon_obj, channels_uri, epg_uri):
+    CHANNELS_VERSION = 1
+    EPG_VERSION = 1
+
+    def __init__(self, addon_id, enabled=False, channels_uri=None, epg_uri=None):
+        """ Initialise object """
+        super(AddonSource, self).__init__()
         self.addon_id = addon_id
-        self.addon_obj = addon_obj
+        self.enabled = enabled
         self.channels_uri = channels_uri
         self.epg_uri = epg_uri
 
         addon = kodiutils.get_addon(addon_id)
+        self.addon_obj = addon
         self.addon_path = kodiutils.addon_path(addon)
 
-    @classmethod
-    def refresh(cls, show_progress=False):
-        """Update channels and EPG data"""
-        channels = []
-        epg = []
-
-        if show_progress:
-            progress = kodiutils.progress(message=kodiutils.localize(30703))  # Detecting IPTV add-ons...
-        else:
-            progress = None
-
-        addons = cls.detect_iptv_addons()
-        for index, addon in enumerate(addons):
-            _LOGGER.info('Updating IPTV data for %s...', addon.addon_id)
-
-            if progress:
-                # Fetching channels and guide of {addon}...
-                progress.update(int(100 * index / len(addons)),
-                                kodiutils.localize(30704).format(addon=kodiutils.addon_name(addon.addon_obj)))
-
-            # Fetch channels
-            channels.append(dict(
-                addon_id=addon.addon_id,
-                addon_name=kodiutils.addon_name(addon.addon_obj),
-                channels=addon.get_channels(),
-            ))
-
-            if progress and progress.iscanceled():
-                progress.close()
-                return
-
-            # Fetch EPG
-            epg.append(addon.get_epg())
-
-            if progress and progress.iscanceled():
-                progress.close()
-                return
-
-        # Write files
-        if show_progress:
-            progress.update(100, kodiutils.localize(30705))  # Updating channels and guide...
-
-        IptvSimple.write_playlist(channels)
-        IptvSimple.write_epg(epg, channels)
-
-        if kodiutils.get_setting_bool('iptv_simple_restart'):
-            if show_progress:
-                # Restart now.
-                IptvSimple.restart(True)
-            else:
-                # Try to restart now. We will schedule it if the user is watching TV.
-                IptvSimple.restart(False)
-
-        # Update last_refreshed
-        kodiutils.set_setting_int('last_refreshed', int(time.time()))
-
-        if show_progress:
-            progress.close()
+    def __str__(self):
+        return kodiutils.addon_name(self.addon_obj)
 
     @staticmethod
-    def detect_iptv_addons():
-        """Find add-ons that provide IPTV channel data"""
+    def detect_sources():
+        """ Find add-ons that provide IPTV channel data.
+
+        :rtype: list[AddonSource]
+        """
         result = kodiutils.jsonrpc(method="Addons.GetAddons",
                                    params={'installed': True, 'enabled': True, 'type': 'xbmc.python.pluginsource'})
 
-        addons = []
+        sources = []
         for row in result['result'].get('addons', []):
             addon = kodiutils.get_addon(row['addonid'])
 
             # Check if add-on supports IPTV Manager
-            if addon.getSetting('iptv.enabled') != 'true':
+            if not addon.getSetting('iptv.enabled'):
                 continue
 
-            addons.append(Addon(
+            sources.append(AddonSource(
                 addon_id=row['addonid'],
-                addon_obj=addon,
+                enabled=addon.getSetting('iptv.enabled') == 'true',
                 channels_uri=addon.getSetting('iptv.channels_uri'),
                 epg_uri=addon.getSetting('iptv.epg_uri'),
             ))
 
-        return addons
+        return sources
+
+    def enable(self):
+        """ Enable this source. """
+        addon = kodiutils.get_addon(self.addon_id)
+        addon.setSetting('iptv.enabled', 'true')
+
+    def disable(self):
+        """ Disable this source. """
+        addon = kodiutils.get_addon(self.addon_id)
+        addon.setSetting('iptv.enabled', 'false')
 
     def get_channels(self):
-        """Get channel data from this add-on"""
+        """ Get channel data from this source.
+
+        :rtype: dict|str
+        """
         _LOGGER.info('Requesting channels from %s...', self.channels_uri)
         if not self.channels_uri:
             return []
@@ -144,10 +105,10 @@ class Addon:
 
         # Return M3U8-format as-is without headers
         if not isinstance(data, dict):
-            return data.replace('#EXTM3U\n', '')
+            return self._extract_m3u(data)
 
         # JSON-STREAMS format
-        if data.get('version', 1) > CHANNELS_VERSION:
+        if data.get('version', 1) > self.CHANNELS_VERSION:
             _LOGGER.warning('Skipping %s since it uses an unsupported version: %d', self.channels_uri,
                             data.get('version'))
             return []
@@ -187,24 +148,26 @@ class Addon:
         return channels
 
     def get_epg(self):
-        """Get epg data from this add-on"""
+        """ Get EPG data from this source.
+
+        :rtype: dict|str
+        """
         if not self.epg_uri:
             return {}
 
         _LOGGER.info('Requesting epg from %s...', self.epg_uri)
         try:
             data = self._get_data_from_addon(self.epg_uri)
-            _LOGGER.debug(data)
         except Exception as exc:  # pylint: disable=broad-except
             _LOGGER.error('Something went wrong while calling %s: %s', self.addon_id, exc)
             return {}
 
         # Return XMLTV-format as-is without headers and footers
         if not isinstance(data, dict):
-            return re.search(r'<tv[^>]*>(.*)</tv>', data, flags=re.DOTALL).group(1).strip()
+            return self._extract_xmltv(data)
 
         # JSON-EPG format
-        if data.get('version', 1) > EPG_VERSION:
+        if data.get('version', 1) > self.EPG_VERSION:
             _LOGGER.warning('Skipping EPG from %s since it uses an unsupported version: %d', self.epg_uri,
                             data.get('version'))
             return {}
@@ -217,7 +180,7 @@ class Addon:
         return data['epg']
 
     def _get_data_from_addon(self, uri):
-        """Request data from the specified URI"""
+        """ Request data from the specified URI. """
         # Plugin path
         if uri.startswith('plugin://'):
             # Prepare data
@@ -240,7 +203,7 @@ class Addon:
 
     @staticmethod
     def _prepare_for_data():
-        """Prepare ourselves so we can receive data"""
+        """ Prepare ourselves so we can receive data. """
         # Bind on localhost on a free port above 1024
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind(('localhost', 0))
@@ -252,7 +215,7 @@ class Addon:
         return sock
 
     def _wait_for_data(self, sock, timeout=10):
-        """Wait for data to arrive on the socket"""
+        """ Wait for data to arrive on the socket. """
         # Set a connection timeout
         # The remote and should connect back as soon as possible so we know that the request is being processed
         sock.settimeout(timeout)

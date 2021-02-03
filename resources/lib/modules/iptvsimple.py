@@ -25,7 +25,42 @@ class IptvSimple:
     restart_required = False
 
     def __init__(self):
-        """Init"""
+        """Initialise object"""
+
+    @classmethod
+    def _get_settings(cls):
+        """Return a dictionary with the required settings."""
+        output_dir = kodiutils.addon_profile()
+        return {
+            'm3uPathType': '0',  # Local path
+            'm3uPath': os.path.join(output_dir, IPTV_SIMPLE_PLAYLIST),
+            'epgPathType': '0',  # Local path
+            'epgPath': os.path.join(output_dir, IPTV_SIMPLE_EPG),
+            'epgCache': 'true',
+            'epgTimeShift': '0',
+            'logoPathType': '0',  # Local path
+            'logoPath': '/',
+            'catchupEnabled': 'true',  # Allow playback from the guide in Matrix
+            'allChannelsCatchupMode': '1',  # Allow to specify the vod mode per channel
+            'catchupOnlyOnFinishedProgrammes': 'false',  # Allow vod also on future programs
+        }
+
+    @classmethod
+    def check(cls):
+        """Check if IPTV Simple is configured correctly."""
+        try:
+            addon = kodiutils.get_addon(IPTV_SIMPLE_ID)
+        except Exception as exc:  # pylint: disable=broad-except
+            _LOGGER.exception(exc)
+            return True  # It might be restarting
+
+        # Validate IPTV Simple configuration
+        settings = cls._get_settings()
+        for key, value in settings.items():
+            if value != addon.getSetting(key):
+                return False
+
+        return True
 
     @classmethod
     def setup(cls):
@@ -45,22 +80,9 @@ class IptvSimple:
         cls._deactivate()
 
         # Configure IPTV Simple
-        output_dir = kodiutils.addon_profile()
-
-        addon.setSetting('m3uPathType', '0')  # Local path
-        addon.setSetting('m3uPath', os.path.join(output_dir, IPTV_SIMPLE_PLAYLIST))
-
-        addon.setSetting('epgPathType', '0')  # Local path
-        addon.setSetting('epgPath', os.path.join(output_dir, IPTV_SIMPLE_EPG))
-        addon.setSetting('epgCache', 'true')
-        addon.setSetting('epgTimeShift', '0')
-
-        addon.setSetting('logoPathType', '0')  # Local path
-        addon.setSetting('logoPath', '/')
-
-        addon.setSetting('catchupEnabled', 'true')
-        addon.setSetting('allChannelsCatchupMode', '1')
-        addon.setSetting('catchupOnlyOnFinishedProgrammes', 'false')
+        settings = cls._get_settings()
+        for key, value in settings.items():
+            addon.setSetting(key, value)
 
         # Activate IPTV Simple
         cls._activate()
@@ -107,16 +129,17 @@ class IptvSimple:
         with open(playlist_path + '.tmp', 'wb') as fdesc:
             m3u8_data = '#EXTM3U\n'
 
-            for addon in channels:
-                m3u8_data += '## {addon_name}\n'.format(**addon)
+            for source in channels:
+                m3u8_data += '## {name}\n'.format(**source)
 
                 # RAW M3U8 data
-                if not isinstance(addon['channels'], list):
-                    m3u8_data += addon['channels']
+                if not isinstance(source['channels'], list):
+                    m3u8_data += source['channels']
+                    m3u8_data += "\n"
                     continue
 
                 # JSON-STREAMS format
-                for channel in addon['channels']:
+                for channel in source['channels']:
                     m3u8_data += '#EXTINF:-1 tvg-name="{name}"'.format(**channel)
                     if channel.get('id'):
                         m3u8_data += ' tvg-id="{id}"'.format(**channel)
