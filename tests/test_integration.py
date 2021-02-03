@@ -49,6 +49,14 @@ class IntegrationTest(unittest.TestCase):
             self.assertTrue('raw1.com' in data)
             self.assertTrue('#KODIPROP:inputstream=inputstream.ffmpegdirect' in data)
 
+            # Check groups
+            self.assertRegex(data, r'#EXTINF:-1 .*?tvg-id="channel1.com".*?group-title="Example IPTV Addon"')
+            self.assertRegex(data, r'#EXTINF:-1 .*?tvg-id="één.be".*?group-title=".*?VRT.*?"')
+            self.assertRegex(data, r'#EXTINF:-1 .*?tvg-id="één.be".*?group-title=".*?Belgium.*?"')
+            self.assertRegex(data, r'#EXTINF:-1 .*?tvg-id="één.be".*?group-title=".*?Example IPTV Addon.*?"')
+            self.assertRegex(data, r'#EXTINF:-1 .*?tvg-id="radio1.com".*?group-title=".*?VRT.*?"')
+            self.assertRegex(data, r'#EXTINF:-1 .*?tvg-id="radio1.com".*?group-title=".*?Example IPTV Addon.*?"')
+
         # Validate EPG
         xml = lxml.etree.parse(epg_path)
         validator = lxml.etree.DTD('tests/xmltv.dtd')
