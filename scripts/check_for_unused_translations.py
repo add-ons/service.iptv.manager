@@ -19,6 +19,10 @@ code = subprocess.check_output(['git', 'grep', '', '--', 'resources/*.py', 'reso
 # Load po file
 po = polib.pofile('resources/language/resource.language.en_gb/strings.po')
 for entry in po:
+    # Skip empty translations
+    if entry.msgid == '':
+        continue
+
     # Extract msgctxt
     msgctxt = entry.msgctxt.lstrip('#')
 
