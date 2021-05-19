@@ -34,6 +34,11 @@ def refresh():
     kodiutils.open_settings()
 
 
+def reload():
+    """Silently refresh the channels and EPG"""
+    Addon.refresh()
+
+
 def play_from_contextmenu():
     """Play an item from the Context Menu in Kodi 18"""
     stream = ContextMenu.get_direct_uri()
@@ -58,6 +63,7 @@ def run(args):
     function_map = {
         'setup-iptv-simple': setup_iptv_simple,
         'refresh': refresh,
+        'reload': reload,
         'play_from_contextmenu': play_from_contextmenu,
         'open_settings': open_settings,
     }

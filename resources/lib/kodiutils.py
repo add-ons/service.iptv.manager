@@ -126,6 +126,33 @@ def localize(string_id, **kwargs):
     return ADDON.getLocalizedString(string_id)
 
 
+def set_property(key, value):
+    """Set an add-on property"""
+    xbmcgui.Window(10000).setProperty(key, from_unicode(str(value)))
+    return True
+
+    
+def get_property(key, default=None):
+    """Get an add-on property as string"""
+    try:
+        value = to_unicode(xbmcgui.Window(10000).getProperty(key))
+    except RuntimeError:
+        return default
+    if value == '' and default is not None:
+        return default
+    return value
+
+
+def get_property_int(key, default=None):
+    """Get an add-on property as integer"""
+    try:
+        return int(get_property(key, default))
+    except ValueError:  # Occurs when not an integer
+        return default
+    except RuntimeError:
+        return default
+
+
 def get_setting(key, default=None):
     """Get an add-on setting as string"""
     try:

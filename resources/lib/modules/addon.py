@@ -101,7 +101,7 @@ class Addon:
                 IptvSimple.restart(False)
 
         # Update last_refreshed
-        kodiutils.set_setting_int('last_refreshed', int(time.time()))
+        kodiutils.set_property('last_refreshed', int(time.time()))
 
         if show_progress:
             progress.close()

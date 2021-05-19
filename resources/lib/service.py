@@ -46,7 +46,7 @@ class BackgroundService(Monitor):
     def _is_refresh_required():
         """Returns if we should trigger an update based on the settings."""
         refresh_interval = kodiutils.get_setting_int('refresh_interval', 24) * 3600
-        last_refreshed = kodiutils.get_setting_int('last_refreshed', 0)
+        last_refreshed = kodiutils.get_property_int('last_refreshed', 0)
         return (last_refreshed + refresh_interval) <= time.time()
 
 
