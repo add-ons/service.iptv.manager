@@ -15,6 +15,7 @@ import datetime
 
 from resources.lib import kodiutils
 from resources.lib.modules.iptvsimple import IptvSimple
+from simplecache import SimpleCache
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,6 +40,8 @@ def update_qs(url, **params):
 
 class Addon:
     """Helper class for Addon communication"""
+    cache = SimpleCache() 
+    cache.enable_mem_cache = False
 
     def __init__(self, addon_id, addon_obj, channels_uri, epg_uri):
         self.addon_id = addon_id
@@ -64,30 +67,38 @@ class Addon:
         addons = cls.detect_iptv_addons()
         for index, addon in enumerate(addons):
             """Check if addon requires update"""
-            _LOGGER.info('Updating IPTV data for %s...', addon.addon_id)
             
             if not force and not cls.is_refresh_required(addon.addon_id):
-                continue
+                addon_epg = cls.cache.get('iptvmanager.epg.%s'%(addon.addon_id))
+                addon_channel = cls.cache.get('iptvmanager.channel.%s'%(addon.addon_id))
+                if addon_epg and addon_channel:
+                    _LOGGER.info('Update not needed for %s...', addon.addon_id)
+                    channels.append(addon_channel)
+                    epg.append(addon_epg)
+                    continue
+            
             
             if progress:
                 # Fetching channels and guide of {addon}...
                 progress.update(int(100 * index / len(addons)),
                                 kodiutils.localize(30704).format(addon=kodiutils.addon_name(addon.addon_obj)))
+            _LOGGER.info('Updating IPTV data for %s...', addon.addon_id)
 
             # Fetch channels
-            channels.append(dict(
+            addon_channel = dict(
                 addon_id=addon.addon_id,
                 addon_name=kodiutils.addon_name(addon.addon_obj),
                 channels=addon.get_channels(),
-            ))
-
+            )
+            channels.append(addon_channel)
+            
             if progress and progress.iscanceled():
                 progress.close()
                 return
 
             # Fetch EPG
             addon_epg = addon.get_epg()
-            cls.set_update_time(addon.addon_id,addon_epg)
+            cls.set_update_time(cls,addon.addon_id,addon_epg,addon_channel)
             epg.append(addon_epg)
 
             if progress and progress.iscanceled():
@@ -122,18 +133,20 @@ class Addon:
         now = datetime.datetime.utcnow()
         if dateutil.parser.parse(kodiutils.get_setting('%s.next_update'%(addon_id), now.strftime('%Y%m%d%H%M%S %z').rstrip())) <= now:
             refresh_required = True
-        _LOGGER.debug('%s is refresh required? %s'%(addon_id,refresh_required))
+        _LOGGER.info('%s is refresh required? %s'%(addon_id,refresh_required))
         return refresh_required
         
         
-    @staticmethod
-    def set_update_time(addon_id, epg):
+    def set_update_time(self, addon_id, addon_epg, addon_channel):
         """Find epgs min. stop entry"""
         now = datetime.datetime.utcnow()
-        max_stop = [max([dateutil.parser.parse(program['stop']) for program in programmes], default=now) for channel, programmes in epg.items()]
+        max_stop = [max([dateutil.parser.parse(program['stop']) for program in programmes], default=now) for channel, programmes in addon_epg.items()]
         next_update = (min(max_stop, default=now) - datetime.timedelta(hours=1))#start update prematurely to assure no gaps in meta.
+        life = abs(now - next_update).total_seconds()
+        self.cache.set('iptvmanager.epg.%s'%(addon_id), addon_epg, expiration=datetime.timedelta(seconds=life))
+        self.cache.set('iptvmanager.channel.%s'%(addon_id), addon_channel, expiration=datetime.timedelta(seconds=life))
         kodiutils.set_setting('%s.next_update'%(addon_id),next_update.strftime('%Y%m%d%H%M%S %z').rstrip())
-        _LOGGER.debug('%s next update %s'%(addon_id,next_update.strftime('%Y%m%d%H%M%S %z').rstrip()))
+        _LOGGER.info('%s next update %s'%(addon_id,next_update.strftime('%Y%m%d%H%M%S %z').rstrip()))
             
 
     @staticmethod

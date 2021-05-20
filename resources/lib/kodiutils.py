@@ -128,14 +128,14 @@ def localize(string_id, **kwargs):
 
 def set_property(key, value):
     """Set an add-on property"""
-    xbmcgui.Window(10000).setProperty(key, from_unicode(str(value)))
+    xbmcgui.Window(10000).setProperty('iptvmanager.%s'%(key), from_unicode(str(value)))
     return True
 
     
 def get_property(key, default=None):
     """Get an add-on property as string"""
     try:
-        value = to_unicode(xbmcgui.Window(10000).getProperty(key))
+        value = to_unicode(xbmcgui.Window(10000).getProperty('iptvmanager.%s'%(key)))
     except RuntimeError:
         return default
     if value == '' and default is not None:
