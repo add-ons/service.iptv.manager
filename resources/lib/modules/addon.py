@@ -10,6 +10,8 @@ import os
 import re
 import socket
 import time
+import dateutil.parser
+import datetime
 
 from resources.lib import kodiutils
 from resources.lib.modules.iptvsimple import IptvSimple
@@ -43,12 +45,13 @@ class Addon:
         self.addon_obj = addon_obj
         self.channels_uri = channels_uri
         self.epg_uri = epg_uri
-
+        
         addon = kodiutils.get_addon(addon_id)
         self.addon_path = kodiutils.addon_path(addon)
 
+
     @classmethod
-    def refresh(cls, show_progress=False):
+    def refresh(cls, show_progress=False, force=False):
         """Update channels and EPG data"""
         channels = []
         epg = []
@@ -60,8 +63,12 @@ class Addon:
 
         addons = cls.detect_iptv_addons()
         for index, addon in enumerate(addons):
+            """Check if addon requires update"""
             _LOGGER.info('Updating IPTV data for %s...', addon.addon_id)
-
+            
+            if not force and not cls.is_refresh_required(addon.addon_id):
+                continue
+            
             if progress:
                 # Fetching channels and guide of {addon}...
                 progress.update(int(100 * index / len(addons)),
@@ -79,7 +86,9 @@ class Addon:
                 return
 
             # Fetch EPG
-            epg.append(addon.get_epg())
+            addon_epg = addon.get_epg()
+            cls.set_update_time(addon.addon_id,addon_epg)
+            epg.append(addon_epg)
 
             if progress and progress.iscanceled():
                 progress.close()
@@ -101,10 +110,35 @@ class Addon:
                 IptvSimple.restart(False)
 
         # Update last_refreshed
-        kodiutils.set_setting_int('last_refreshed', int(time.time()))
+        kodiutils.set_property('last_refreshed', int(time.time()))
 
         if show_progress:
             progress.close()
+
+
+    @staticmethod
+    def is_refresh_required(addon_id):
+        refresh_required = False
+        now = datetime.datetime.utcnow()
+        if dateutil.parser.parse(kodiutils.get_setting('%s.next_update'%(addon_id), now.strftime('%Y%m%d%H%M%S %z').rstrip())) <= now:
+            refresh_required = True
+        _LOGGER.debug('%s is refresh required? %s'%(addon_id,refresh_required))
+        return refresh_required
+        
+        
+    @staticmethod
+    def set_update_time(addon_id, epg):
+        """Find epgs min. stop entry"""
+        def get_max_stop(channel, programmes):
+            for program in programmes:
+                yield dateutil.parser.parse(program['stop'])
+                
+        now = datetime.datetime.utcnow()
+        max_stop = [max(list(get_max_stop(channel, programmes)), default=now) for channel, programmes in epg.items()]
+        next_update = (min(max_stop, default=now) - datetime.timedelta(hours=1))#start update prematurely to assure no gaps in meta.
+        kodiutils.set_setting('%s.next_update'%(addon_id),next_update.strftime('%Y%m%d%H%M%S %z').rstrip())
+        _LOGGER.debug('%s next update %s'%(addon_id,next_update.strftime('%Y%m%d%H%M%S %z').rstrip()))
+            
 
     @staticmethod
     def detect_iptv_addons():
