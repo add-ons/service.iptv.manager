@@ -140,13 +140,16 @@ class Addon:
     def set_update_time(self, addon_id, addon_epg, addon_channel):
         """Find epgs min. stop entry"""
         now = datetime.datetime.utcnow()
-        max_stop = [max([dateutil.parser.parse(program['stop']) for program in programmes], default=now) for channel, programmes in addon_epg.items()]
-        next_update = (min(max_stop, default=now) - datetime.timedelta(hours=1))#start update prematurely to assure no gaps in meta.
+        max_start = min([min([dateutil.parser.parse(program['start']) for program in programmes], default=now) for channel, programmes in addon_epg.items()], default=now)
+        max_stop =  min([max([dateutil.parser.parse(program['stop']) for program in programmes], default=now) for channel, programmes in addon_epg.items()], default=now)
+        half_life, r = divmod(abs(max_start - max_stop).total_seconds(),3600)
+        half_life = round(half_life//2)
+        next_update = (max_stop - datetime.timedelta(hours=half_life))#start update prematurely to assure no gaps in meta.
         life = abs(now - next_update).total_seconds()
         self.cache.set('iptvmanager.epg.%s'%(addon_id), addon_epg, expiration=datetime.timedelta(seconds=life))
         self.cache.set('iptvmanager.channel.%s'%(addon_id), addon_channel, expiration=datetime.timedelta(seconds=life))
         kodiutils.set_setting('%s.next_update'%(addon_id),next_update.strftime('%Y%m%d%H%M%S %z').rstrip())
-        _LOGGER.info('%s next update %s'%(addon_id,next_update.strftime('%Y%m%d%H%M%S %z').rstrip()))
+        _LOGGER.info('%s next update %s, life %s'%(addon_id,next_update.strftime('%Y%m%d%H%M%S %z').rstrip(),half_life))
             
 
     @staticmethod
