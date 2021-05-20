@@ -129,12 +129,8 @@ class Addon:
     @staticmethod
     def set_update_time(addon_id, epg):
         """Find epgs min. stop entry"""
-        def get_max_stop(channel, programmes):
-            for program in programmes:
-                yield dateutil.parser.parse(program['stop'])
-                
         now = datetime.datetime.utcnow()
-        max_stop = [max(list(get_max_stop(channel, programmes)), default=now) for channel, programmes in epg.items()]
+        max_stop = [max([dateutil.parser.parse(program['stop']) for program in programmes], default=now) for channel, programmes in epg.items()]
         next_update = (min(max_stop, default=now) - datetime.timedelta(hours=1))#start update prematurely to assure no gaps in meta.
         kodiutils.set_setting('%s.next_update'%(addon_id),next_update.strftime('%Y%m%d%H%M%S %z').rstrip())
         _LOGGER.debug('%s next update %s'%(addon_id,next_update.strftime('%Y%m%d%H%M%S %z').rstrip()))
