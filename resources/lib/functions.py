@@ -35,6 +35,11 @@ def refresh():
 
 
 def reload():
+    """Refresh the channels and EPG without opening settings"""
+    Addon.refresh(True,force=True)
+
+
+def update():
     """Silently refresh the channels and EPG"""
     Addon.refresh(force=True)
 
@@ -64,6 +69,7 @@ def run(args):
         'setup-iptv-simple': setup_iptv_simple,
         'refresh': refresh,
         'reload': reload,
+        'update': update,
         'play_from_contextmenu': play_from_contextmenu,
         'open_settings': open_settings,
     }
