@@ -83,7 +83,7 @@ class IptvSimple:
         if not force and (kodiutils.get_cond_visibility('Pvr.IsPlayingTv') or kodiutils.get_cond_visibility('Pvr.IsPlayingRadio')):
             # Don't restart when we are Playing TV or Radio
             cls.restart_required = True
-            _LOGGER.info('Postponing restart of Simple IPTV since it is currently in use.')
+            _LOGGER.debug('Postponing restart of Simple IPTV since it is currently in use.')
             return
 
         cls.restart_required = False
