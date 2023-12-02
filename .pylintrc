@@ -14,6 +14,8 @@ disable=
     too-many-instance-attributes,
     too-many-locals,
     consider-using-f-string,
+    use-dict-literal,
+    broad-exception-raised,
 max-line-length=160
 max-statements=70
 extension-pkg-whitelist=lxml
