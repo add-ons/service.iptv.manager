@@ -7,12 +7,14 @@ import logging
 import os
 import time
 
+import xbmcvfs
+import glob
+import shutil
+
 import dateutil.parser
 import dateutil.tz
 
 from resources.lib import kodiutils
-
-import xbmcvfs, glob, shutil
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -71,9 +73,9 @@ class IptvSimple:
         path = xbmcvfs.translatePath(addon.getAddonInfo('profile'))
         settingsxml = path + 'settings.xml'
         if os.path.isfile(settingsxml):
-          for f in glob.glob(path + "*.xml"):
-            if os.path.basename(f) != 'settings.xml':
-              shutil.copyfile(settingsxml, f)
+            for f in glob.glob(path + "*.xml"):
+                if os.path.basename(f) != 'settings.xml':
+                    shutil.copyfile(settingsxml, f)
 
         return True
 
