@@ -7,9 +7,10 @@ import logging
 import os
 import time
 
-import xbmcvfs
 import glob
 import shutil
+
+import xbmcvfs
 
 import dateutil.parser
 import dateutil.tz
