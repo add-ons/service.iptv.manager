@@ -74,9 +74,9 @@ class IptvSimple:
         path = xbmcvfs.translatePath(addon.getAddonInfo('profile'))
         settingsxml = path + 'settings.xml'
         if os.path.isfile(settingsxml):
-            for f in glob.glob(path + "*.xml"):
-                if os.path.basename(f) != 'settings.xml':
-                    shutil.copyfile(settingsxml, f)
+            for file in glob.glob(path + "*.xml"):
+                if os.path.basename(file) != 'settings.xml':
+                    shutil.copyfile(settingsxml, file)
 
         return True
 
