@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [ 3.5, 3.6, 3.7, 3.8, 3.9 ]
+        python-version: [ 3.7, 3.8, 3.9 ]
         include:
           # Kodi Matrix on Windows uses a bundled Python 3.8, but we test 3.9 also to be sure.
           - os: windows-latest
