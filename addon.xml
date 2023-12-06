@@ -3,17 +3,17 @@
     <requires>
         <import addon="xbmc.python" version="2.26.0"/>
         <import addon="script.module.dateutil" version="2.6.0"/>
+        <import addon="script.module.requests" version="2.22.0"/>
+        <import addon="script.module.routing" version="0.2.0"/>
         <import addon="pvr.iptvsimple" version="3.8.8"/>
     </requires>
-    <!-- This is needed to get an add-on icon -->
-    <extension point="xbmc.python.script" library="default.py">
+    <extension point="xbmc.python.pluginsource" library="addon_entry.py">
         <provides>executable</provides>
     </extension>
-    <extension point="xbmc.service" library="service.py"/>
-    <extension point="xbmc.python.library" library="default.py"/>
+    <extension point="xbmc.service" library="service_entry.py"/>
     <extension point="kodi.context.item">
         <menu id="kodi.core.main">
-            <item library="context.py">
+            <item library="context_entry.py">
                 <label>30600</label>
                 <visible>String.StartsWith(System.BuildVersion,18) + Window.IsVisible(tvguide) | Window.IsVisible(tvsearch)</visible>
             </item>

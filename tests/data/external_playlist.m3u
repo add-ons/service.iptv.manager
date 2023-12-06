@@ -1,0 +1,8 @@
+# Some comments
+
+#EXTM3U
+#EXTINF:-1 tvg-name="Custom 1" tvg-id="custom1.com",Custom 1
+https://www.example.com/custom_1.m3u
+
+#EXTINF:-1 tvg-name="Custom 2" tvg-id="custom2.com",Custom 2
+https://www.example.com/custom_2.m3u

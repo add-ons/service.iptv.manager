@@ -8,6 +8,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+# MENU
+msgctxt "#30001"
+msgid "Configure IPTV Simple automatically"
+msgstr "Configurează IPTV Simple în mod automat"
+
+msgctxt "#30002"
+msgid "Refresh channels and guide now"
+msgstr "Actualizează canalele și ghidul acum"
+
+msgctxt "#30003"
+msgid "IPTV Manager Settings"
+msgstr ""
+
+msgctxt "#30004"
+msgid "Manage Sources"
+msgstr ""
+
+msgctxt "#30010"
+msgid "Sources"
+msgstr ""
+
+msgctxt "#30011"
+msgid "Supported Add-ons"
+msgstr ""
+
+msgctxt "#30012"
+msgid "External Sources"
+msgstr ""
+
+msgctxt "#30013"
+msgid "Add external source…"
+msgstr ""
+
+msgctxt "#30014"
+msgid "Delete Source"
+msgstr ""
+
+msgctxt "#30020"
+msgid "Name"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Modify the name of this source."
+msgstr ""
+
+msgctxt "#30022"
+msgid "Enabled"
+msgstr ""
+
+msgctxt "#30023"
+msgid "Enable or disable this source."
+msgstr ""
+
+msgctxt "#30024"
+msgid "Yes"
+msgstr ""
+
+msgctxt "#30025"
+msgid "No"
+msgstr ""
+
+msgctxt "#30026"
+msgid "Playlist"
+msgstr ""
+
+msgctxt "#30027"
+msgid "Select the channel data in M3U format for this source."
+msgstr ""
+
+msgctxt "#30028"
+msgid "EPG"
+msgstr ""
+
+msgctxt "#30029"
+msgid "Select the EPG data in XMLTV format for this source."
+msgstr ""
+
+msgctxt "#30030"
+msgid "Enter URL…"
+msgstr ""
+
+msgctxt "#30031"
+msgid "Browse for file…"
+msgstr ""
+
+msgctxt "#30032"
+msgid "None"
+msgstr ""
+
 # CONTEXT MENU
 msgctxt "#30600"
 msgid "Play with IPTV Manager"
@@ -57,7 +146,7 @@ msgstr "Interval de actualizare [I](în ore)[/I]"
 
 msgctxt "#30803"
 msgid "Refresh channels and guide now…"
-msgstr "Actualizează canalele și ghidul acum..."
+msgstr "Actualizează canalele și ghidul acum…"
 
 msgctxt "#30820"
 msgid "IPTV Simple"
@@ -69,11 +158,11 @@ msgstr "Configurare"
 
 msgctxt "#30822"
 msgid "Configure IPTV Simple automatically…"
-msgstr "Configurează IPTV Simple în mod automat..."
+msgstr "Configurează IPTV Simple în mod automat…"
 
 msgctxt "#30823"
 msgid "Open IPTV Simple settings…"
-msgstr "Deschide setările IPTV Simple..."
+msgstr "Deschide setările IPTV Simple…"
 
 msgctxt "#30824"
 msgid "Automatically restart IPTV Simple to refresh the data"
